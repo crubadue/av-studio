@@ -1,47 +1,107 @@
-import React from "react";
-import { Upload, message } from "antd";
+import React, {useState} from "react";
+// import { Upload, message } from "antd";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import { InboxOutlined } from "@ant-design/icons";
+import { Upload } from "@progress/kendo-react-upload";
+// import './index.css';
 
-const { Dragger } = Upload;
+const fileStatuses = [
+  "UploadFailed",
+  "Initial",
+  "Selected",
+  "Uploading",
+  "Uploaded",
+  "RemoveFailed",
+  "Removing",
+];
 
-const props = {
-  name: "file",
-  multiple: false,
-  action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+const Uploader = (props) => {
+  const { setModelFile } = props;
 
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
+  const [files, setFiles] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [filePreviews, setFilePreviews] = useState({});
 
-const Uploader = () => {
+  const onAdd = (event) => {
+    setFiles(event.newState);
+    setEvents([...events, `File selected: ${event.affectedFiles[0].name}`]);
+  };
+
+  const onRemove = (event) => {
+    const filePreviews = {
+      ...filePreviews,
+    };
+
+    event.affectedFiles.forEach((file) => {
+      delete filePreviews[file.uid];
+    });
+
+    setFiles(event.newState);
+    setEvents([...events, `File removed: ${event.affectedFiles[0].name}`]);
+    setFilePreviews(filePreviews);
+  };
+
+  const onProgress = (event) => {
+    setFiles(event.newState);
+    setEvents([...events, `On Progress: ${event.affectedFiles[0].progress} %`]);
+  };
+
+  const onStatusChange = (event) => {
+    const file = event.affectedFiles[0];
+    console.log("fff", file.getRawFile());
+    console.log("event", event.newState);
+
+    var blob = new Blob([file.getRawFile()]);
+    var url = URL.createObjectURL(blob);
+    setModelFile({
+      url,
+      fileExtension: '.' + file.getRawFile().name.split('.')[1],
+    });
+
+    setFiles(event.newState);
+    setEvents([
+      ...events,
+      `File '${file.name}' status changed to: ${fileStatuses[file.status]}`,
+    ]);
+  };
+
   return (
-    <Row style={{ height: "100vh" }}>
-      <Col span={24}>
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag gltf,glb or babylon files to get started
-          </p>
-          <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibit from
-            uploading company data or other band files
-          </p>
-        </Dragger>
-      </Col>
-    </Row>
+    <div style={{overflow:"hidden"}}>
+      <Upload
+        batch={false}
+        multiple={false}
+        files={files}
+        onAdd={onAdd}
+        onRemove={onRemove}
+        onProgress={onProgress}
+        onStatusChange={onStatusChange}
+        withCredentials={false}
+        saveUrl={"https://demos.telerik.com/kendo-ui/service-v4/upload/save"}
+        removeUrl={
+          "https://demos.telerik.com/kendo-ui/service-v4/upload/remove"
+        }
+      ></Upload>
+      {/* <div className={"example-config"} style={{ marginTop: 20 }}>
+        <ul className={"event-log"}>
+          {events.map((event) => (
+            <li>{event}</li>
+          ))}
+        </ul>
+      </div>
+      {files.length ? (
+        <div className={"img-preview example-config"}>
+          <h3>Preview selected images</h3>
+          {Object.keys(filePreviews).map((fileKey) => (
+            <img
+              src={filePreviews[fileKey]}
+              alt={"image preview"}
+              style={{ width: 200, margin: 10 }}
+            />
+          ))}
+        </div>
+      ) : undefined} */}
+    </div>
   );
 };
 

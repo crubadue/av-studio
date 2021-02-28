@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs';
-import GameManger from './Babylon/GameManager';
+import GameManger from './ModelBased/Babylon/GameManager';
 
-export default function BabylonManager(canvasRef, sockType) {
+export default function BabylonManager(canvasRef) {
   console.log("canvasRef",canvasRef)
     if (!canvasRef) {
       throw new Error("Canvas is not provided!");
@@ -13,7 +13,7 @@ export default function BabylonManager(canvasRef, sockType) {
       // this.props.adaptToDeviceRatio
     );
 
-    const GManger = new GameManger(canvasRef, engine, sockType);
+    const GManger = new GameManger(canvasRef, engine);
 
     return {
       GManger,
