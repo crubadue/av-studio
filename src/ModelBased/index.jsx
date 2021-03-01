@@ -22,7 +22,7 @@ const ImageBased = (props) => {
       case ModelTabsEnum.Editor:
         return <Eidtor modelFile={modelFile} />;
     }
-  }, [selectedTab, modelFile]);
+  }, [selectedTab, modelFile, setModelFile]);
   return <>{renderTabs()}</>;
 };
 

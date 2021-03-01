@@ -12,7 +12,7 @@ export default class LoaderManager {
   loadMeshByURL(modelFile) {
     const {url, fileExtension } = modelFile; 
 
-    console.log("Sds", modelFile);
+    // console.log("Sds", modelFile);
     //Create Bts Scene
     BABYLON.SceneLoader.ImportMesh(
       "",
