@@ -1,0 +1,28 @@
+.matButton {
+    background-repeat: round;
+    background-size: cover;
+    height: 85px;
+    width: 85px;
+    cursor: pointer;
+    outline: none;
+    float: left;
+    border-radius: 4px;
+    margin: 9px;
+    border: 7px solid #3a3f4b;
+  }
+  
+  .matButton:hover,
+  .matButton:focus {
+    border: 7px solid #3e90ff;
+  }
+
+  .ss {
+    background: #3e90ff !important;
+    color: #cacad4 !important;
+    width: 1100px;
+  }
+
+  .ss1 {
+    background: #3a3f4b !important;
+    color: #cacad4 !important;
+  }

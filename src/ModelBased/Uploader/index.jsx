@@ -18,7 +18,6 @@ const fileStatuses = [
 
 const Uploader = (props) => {
   const { setModelFile } = props;
-
   const [files, setFiles] = useState([]);
   const [events, setEvents] = useState([]);
   const [filePreviews, setFilePreviews] = useState({});

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Eidtor from "../ModelBased/Eidtor";
 import Uploader from "../ModelBased/Uploader";
+import '../App.css';
 
 import { ModelTabsEnum } from "../AppUtils";
 
