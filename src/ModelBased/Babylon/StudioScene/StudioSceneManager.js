@@ -57,10 +57,10 @@ export default class StudioSceneManager {
           this.onPointerMove(pointerInfo.event);
           break;
         case BABYLON.PointerEventTypes.POINTERDOUBLETAP:
-          if (this.InputMg.currentSelectedMesh) {
-            //Item Selected Before
-            this.InputMg.currentSelectedMesh.showBoundingBox = false;
-          }
+          // if (this.InputMg.currentSelectedMesh) {
+          //   //Item Selected Before
+          //   this.InputMg.currentSelectedMesh.showBoundingBox = false;
+          // }
           break;
         case BABYLON.PointerEventTypes.POINTERWHEEL:
           this.MouseWheelHandler();
