@@ -3,24 +3,9 @@ import { Tabs, Row, Col } from "antd";
 import MaterialButton from "./MaterialButton";
 
 const { TabPane } = Tabs;
-const data = [
-  "Material 1",
-  "Material 2",
-  "Material 3",
-  "Material 4",
-  "Material 5",
-  "Material 6",
-  "Material 7",
-  "Material 8",
-  "Material 9",
-  "Material 10",
-  "Material 11",
-  "Material 12",
-  "Material 13",
-  "Material 14",
-];
+
 const ListTab = (props) => {
-  const { selectedMaterial, setSelectedMaterial } = props;
+  const { materialList, selectedMaterial, setSelectedMaterial } = props;
   function callback(key) {
     console.log(key);
   }
@@ -36,11 +21,11 @@ const ListTab = (props) => {
             overflow: "auto",
           }}
         >
-          {data.map((ele, index) => {
+          {materialList.map((material, index) => {
             return (
               <Col key={index} span={20} style={{ marginBottom: "10px" }}>
                 <MaterialButton
-                  data={ele}
+                  material={material}
                   selectedMaterial={selectedMaterial}
                   setSelectedMaterial={setSelectedMaterial}
                 ></MaterialButton>

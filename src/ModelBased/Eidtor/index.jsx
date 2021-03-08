@@ -21,6 +21,7 @@ export const GmContext = createContext(null);
 const Eidtor = (props) => {
   const { modelFile } = props;
   const [gameManager, setGameManager] = useState(null);
+  const [loadedMeshData, setLoadedMeshData] = useState(null); //data of loadedMesh
 
   const studioSceneHandlers = useMemo(() => {
     return {
@@ -32,16 +33,23 @@ const Eidtor = (props) => {
         // console.log("Ui Drop Action !!", newDockPoints);
       },
       onDeselect: () => {},
+      onLoadMesh: (meshData) => {
+        setLoadedMeshData(meshData);
+      },
     };
   }, []);
 
   useEffect(() => {
     const GManger = BabylonManager(gmRef.current).GManger; //Create Babylonjs Ref
     GManger.studioSceneManager.handlers = studioSceneHandlers; //Hnadlers
-    GManger.studioSceneManager.handleLoadMeshByURL(modelFile);
+    GManger.studioSceneManager.handleLoadMeshByURL(
+      modelFile,
+      studioSceneHandlers.onLoadMesh
+    );
     setGameManager(GManger);
   }, [setGameManager, studioSceneHandlers, modelFile]);
 
+  console.log("loadedMeshData", loadedMeshData);
   return (
     <GmContext.Provider value={gameManager}>
       {
@@ -55,7 +63,7 @@ const Eidtor = (props) => {
               overflow: "hidden",
             }}
           >
-            <LeftSideMenu />
+            {loadedMeshData && <LeftSideMenu loadedMeshData={loadedMeshData} />}
           </Col>
           <Col
             span={19}

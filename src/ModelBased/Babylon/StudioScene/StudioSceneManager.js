@@ -1,5 +1,6 @@
 import * as BABYLON from "babylonjs";
 import * as BABYLONMaterials from "babylonjs-materials";
+import { MaterialsTypes, MaterialAttributeTypes } from "../../../AppUtils";
 
 import LoaderManager from "./LoaderManager";
 import StudioSceneHelper from "./StudioSceneHelper";
@@ -76,7 +77,6 @@ export default class StudioSceneManager {
     //Installation
     this.createCamera();
     this.setUpEnvironMent();
-
 
     // this.loaderManager.loadMainMesh(); //start load mainBike
 
@@ -181,10 +181,33 @@ export default class StudioSceneManager {
   MouseWheelHandler(ev) {}
   //#endregion
 
-  //#region Handlers
-  handleLoadMeshByURL(modelFile) {
-    this.loaderManager.loadMeshByURL(modelFile);
+  //#region Getters
+  getMaterialOptions(materialId) {
+    let selectedMaterial = this.scene.getMaterialByUniqueID(materialId);
+    if (selectedMaterial.getClassName() === "PBRMaterial")
+      return {
+        metallic: selectedMaterial.metallic,
+        roughness: selectedMaterial.roughness,
+        mainColor: selectedMaterial.albedoColor.toHexString(),
+      };
+    else
+      return {
+        mainColor: selectedMaterial.diffuseColor.toHexString(),
+      };
   }
-
+  //#endregion
+  //#region Handlers
+  handleLoadMeshByURL(modelFile, onLoadMesh) {
+    this.loaderManager.loadMeshByURL(modelFile, onLoadMesh);
+  }
+  handleOnChangeMaterialOption(selectedMatId, attribute) {
+    const { id, type, value } = attribute;
+    let selectedMaterial = this.scene.getMaterialByUniqueID(selectedMatId);
+    let newTargetValue = value;
+    if (type === MaterialAttributeTypes.Color) {
+      newTargetValue = BABYLON.Color3.FromHexString(value);
+    }
+    selectedMaterial[id] = newTargetValue;
+  }
   //#endregion
 }

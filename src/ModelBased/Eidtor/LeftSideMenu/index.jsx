@@ -3,22 +3,24 @@ import NodesTab from "./Nodes";
 import MaterialTab from "./Materials";
 
 export const LeftMenuTabs = {
-    Nodes: "NodesTab",
-    Materials: "MaterialsTab",
+  Nodes: "NodesTab",
+  Materials: "MaterialsTab",
 };
 
 const LeftSideMenu = (props) => {
+  const { loadedMeshData } = props;
   const [selectedTab, setSeletedTab] = useState(LeftMenuTabs.Materials);
 
   const renderTabs = useCallback(() => {
     switch (selectedTab) {
       default:
       case LeftMenuTabs.Nodes:
-        return <NodesTab />;
+        return <NodesTab nodesList={loadedMeshData.nodes} />;
       case LeftMenuTabs.Materials:
-        return <MaterialTab  />;
+        return <MaterialTab materialList={loadedMeshData.materials} />;
     }
-  }, [selectedTab]);
+  }, [selectedTab, loadedMeshData.nodes, loadedMeshData.materials]);
+
   return <>{renderTabs()}</>;
 };
 

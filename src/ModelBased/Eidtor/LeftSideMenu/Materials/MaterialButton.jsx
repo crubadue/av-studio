@@ -1,16 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { Button } from "antd";
 import { FormatPainterOutlined } from "@ant-design/icons";
 import "../../../../index.css";
+import { GmContext } from "../../../Eidtor";
 
 const ListTab = (props) => {
-  const { data, selectedMaterial, setSelectedMaterial } = props;
+  const { material, selectedMaterial, setSelectedMaterial } = props;
+  const gameManager = useContext(GmContext);
 
   const isSelected = useMemo(() => {
-    return selectedMaterial === data ? true : false;
-  }, [data, selectedMaterial]);
+    return selectedMaterial?.id === material.id ? true : false;
+  }, [material, selectedMaterial]);
 
-  console.log("Sds", isSelected);
   return (
     <Button
       type={isSelected ? "primary" : "text"}
@@ -20,10 +21,13 @@ const ListTab = (props) => {
         height: "48px",
       }}
       onClick={() => {
-        setSelectedMaterial(data);
+        let materialOptions = gameManager.studioSceneManager.getMaterialOptions(
+          material.id
+        );
+        setSelectedMaterial({ ...material, options: { ...materialOptions } });
       }}
     >
-      {data}
+      {material.name}
     </Button>
   );
 };

@@ -1,16 +1,60 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { Col, Row, Slider, Switch, Typography, Divider, Popover } from "antd";
 import { SketchPicker } from "react-color";
+import {
+  MaterialsTypes,
+  MaterialAttributeTypes,
+  PBRMaterialAttributes,
+  StandardMaterialAttributes,
+} from "../../../../AppUtils";
+import { GmContext } from "../../../Eidtor";
 
 const { Title } = Typography;
 
 const EditTab = (props) => {
-  const [background, setBackground] = useState("#3e90ff");
+  const { selectedMaterial } = props;
+  const [background, setBackground] = useState(selectedMaterial.options.mainColor);
+  const gameManager = useContext(GmContext);
 
-  const handleChangeComplete = (color) => {
-    console.log(`selected ${color.hex}`);
-    setBackground(color.hex);
-  };
+  console.log("sds", selectedMaterial);
+
+  const isStandardMaterial = useMemo(() => {
+    return selectedMaterial === MaterialsTypes.StandardMaterial ? true : false;
+  }, [selectedMaterial]);
+
+  const handleOnOptionChange = useCallback(
+    //Slides only
+    (attributeId, value) => {
+      console.log("gg", gameManager, "---", attributeId, "---->", value);
+      gameManager.studioSceneManager.handleOnChangeMaterialOption(
+        selectedMaterial.id,
+        {
+          id: attributeId,
+          type: MaterialAttributeTypes.Value,
+          value: value,
+        }
+      );
+    },
+    [gameManager, selectedMaterial.id]
+  );
+
+  const handleOnColorChange = useCallback(
+    (color) => {
+      console.log(`selected ${color.hex}`);
+      gameManager.studioSceneManager.handleOnChangeMaterialOption(
+        selectedMaterial.id,
+        {
+          id: isStandardMaterial
+            ? StandardMaterialAttributes.DiffuseColor
+            : PBRMaterialAttributes.AlbedoColor,
+          type: MaterialAttributeTypes.Color,
+          value: color.hex,
+        }
+      );
+      setBackground(color.hex);
+    },
+    [gameManager, selectedMaterial.id, isStandardMaterial]
+  );
 
   return (
     <Row
@@ -35,27 +79,52 @@ const EditTab = (props) => {
           margin: "0px 0px 15px",
         }}
       >
+        {!isStandardMaterial && (
+          <>
+            <Col span={24}>
+              <Title level={5}> Metallic </Title>
+            </Col>
+            <Col offset={2} span={20}>
+              <Slider
+                defaultValue={selectedMaterial.options.metallic}
+                min={0}
+                max={1}
+                step={0.01}
+                style={{ width: "100%" }}
+                onChange={(value) => {
+                  handleOnOptionChange(PBRMaterialAttributes.Metallic, value);
+                }}
+              />
+            </Col>
+            <Col span={24}>
+              <Title level={5}> Roughness </Title>
+            </Col>
+            <Col offset={2} span={20}>
+              <Slider
+                defaultValue={selectedMaterial.options.roughness}
+                min={0}
+                max={1}
+                step={0.01}
+                style={{ width: "100%" }}
+                onChange={(value) => {
+                  handleOnOptionChange(PBRMaterialAttributes.Roughness, value);
+                }}
+              />
+            </Col>
+          </>
+        )}
         <Col span={24}>
-          <Title level={5}> Metallic </Title>
-        </Col>
-        <Col offset={2} span={20}>
-          <Slider defaultValue={30} style={{ width: "100%" }} />
-        </Col>
-        <Col span={24}>
-          <Title level={5}> Roughness </Title>
-        </Col>
-        <Col offset={2} span={20}>
-          <Slider defaultValue={30} style={{ width: "100%" }} />
-        </Col>
-        <Col span={24}>
-          <Title level={5}> Albedo Color </Title>
+          <Title level={5}>
+            {" "}
+            {isStandardMaterial ? "Diffuse Color" : "Albedo Color"}{" "}
+          </Title>
         </Col>
         <Col offset={4} span={16}>
           <Popover
             content={
               <SketchPicker
                 color={background}
-                onChangeComplete={handleChangeComplete}
+                onChangeComplete={handleOnColorChange}
               />
             }
             trigger="click"

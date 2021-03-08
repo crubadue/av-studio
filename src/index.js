@@ -6,9 +6,10 @@ import reportWebVitals from './reportWebVitals';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 
 ReactDOM.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Home />
-  </React.StrictMode>,
+  // </React.StrictMode>,
+  ,
   document.getElementById('root')
 );
 

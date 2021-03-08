@@ -14,6 +14,7 @@ export const MaterialTabs = {
 };
 
 const MaterialTab = (props) => {
+  const { materialList } = props;
   const [selectedTab, setSeletedTab] = useState(MaterialTabs.EditTab);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
 
@@ -26,16 +27,20 @@ const MaterialTab = (props) => {
     console.log(key);
   };
 
-  console.log("selectedTab", selectedTab);
+  console.log("selectedMaterial", selectedMaterial);
   return (
     <>
       <div style={{ height: "40%" }}>
-        <ListTab selectedMaterial={selectedMaterial} setSelectedMaterial={setSelectedMaterial} />
+        <ListTab
+          materialList={materialList}
+          selectedMaterial={selectedMaterial}
+          setSelectedMaterial={setSelectedMaterial}
+        />
       </div>
       {selectedMaterial && (
         <div style={{ height: "60%" }}>
           <Divider orientation="left" style={{ color: "#3e90ff" }}>
-            {selectedMaterial}
+            {selectedMaterial.name}
           </Divider>
           <div
             style={{
@@ -74,7 +79,7 @@ const MaterialTab = (props) => {
                 }}
               >
                 {selectedTab === MaterialTabs.EditTab ? (
-                  <EditTab />
+                  <EditTab key={selectedMaterial.id} selectedMaterial={selectedMaterial} />
                 ) : (
                   <LinkTab />
                 )}
