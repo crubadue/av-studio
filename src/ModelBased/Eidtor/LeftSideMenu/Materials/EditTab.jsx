@@ -62,7 +62,8 @@ const EditTab = (props) => {
         padding: "15px 15px",
         overflow: "hidden",
         border: "1px solid #fff",
-        margin:"20px 10px"
+        margin:"20px 10px",
+        marginTop:"20px"
         // maxHeight: "calc(100% - 52px)",
         // height: "calc(100% - 30px)",
       }}
