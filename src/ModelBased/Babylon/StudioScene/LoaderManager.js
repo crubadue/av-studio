@@ -35,7 +35,7 @@ export default class LoaderManager {
             // mesh contains material
             let material = meshes[i].material;
             let materialObj = null;
-            console.log("sd", material.getClassName());
+            console.log("sd1", material.getClassName());
             switch (material.getClassName()) {
               case "MultiMaterial":
                 break;
