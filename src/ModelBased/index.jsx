@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Eidtor from "../ModelBased/Eidtor";
-import Uploader from "../ModelBased/Uploader";
+import Eidtor from "./Eidtor";
+// import Uploader from "./Uploader";
+import SandBox from './Uploader2/SandBox';
+
+// import EditTab from "./EditTab";
+
 import '../App.css';
 
 import { ModelTabsEnum } from "../AppUtils";
@@ -19,7 +23,7 @@ const ImageBased = (props) => {
     switch (selectedTab) {
       default:
       case ModelTabsEnum.Uploader:
-        return <Uploader setModelFile={setModelFile} />;
+        return <SandBox/>
       case ModelTabsEnum.Editor:
         return <Eidtor modelFile={modelFile} />;
     }
@@ -28,3 +32,5 @@ const ImageBased = (props) => {
 };
 
 export default ImageBased;
+
+// return <Uploader setModelFile={setModelFile} />;
