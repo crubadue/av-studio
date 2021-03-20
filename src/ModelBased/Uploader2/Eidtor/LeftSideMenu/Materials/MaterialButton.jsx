@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from "react";
 import { Button } from "antd";
 import { FormatPainterOutlined } from "@ant-design/icons";
-import "../../../../index.css";
-import { GmContext } from "../../../Eidtor";
+import "../../../../../index.css";
+import { GmContext } from "../../../components/renderingZone";
 
 const ListTab = (props) => {
   const { material, selectedMaterial, setSelectedMaterial } = props;

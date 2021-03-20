@@ -6,8 +6,8 @@ import {
   MaterialAttributeTypes,
   PBRMaterialAttributes,
   StandardMaterialAttributes,
-} from "../../../../AppUtils";
-import { GmContext } from "../../../Eidtor";
+} from "../../../../../AppUtils";
+import { GmContext } from "../../../components/renderingZone";
 
 const { Title } = Typography;
 
@@ -16,7 +16,7 @@ const EditTab = (props) => {
   const [background, setBackground] = useState(selectedMaterial.options.mainColor);
   const gameManager = useContext(GmContext);
 
-  console.log("sds", selectedMaterial);
+  // console.log("sds", selectedMaterial);
 
   const isStandardMaterial = useMemo(() => {
     return selectedMaterial === MaterialsTypes.StandardMaterial ? true : false;

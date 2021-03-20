@@ -12,7 +12,7 @@ var fullScreenLogo = "./img/Archvision-Logo.svg";
 interface ISandboxProps {
 }
 
-export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: boolean, errorMessage: string }> {
+export class SandBox extends React.Component<ISandboxProps, { isFileLoaded: boolean, errorMessage: string }> {
     private _globalState: GlobalState;
     private _assetUrl?: string;
     private _autoRotate?: boolean;
@@ -23,12 +23,13 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
 
     public constructor(props: ISandboxProps) {
         super(props);
+        document.title = "ArchVision_Studio";
         this._globalState = new GlobalState();
         this._logoRef = React.createRef();
         this._dropTextRef = React.createRef();
         this._clickInterceptorRef = React.createRef();
 
-        this.state = { isFooterVisible: true, errorMessage: "" };
+        this.state = { isFileLoaded: false, errorMessage: "" };
 
         this.checkUrl();
 
@@ -36,10 +37,12 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
 
         // Events
         this._globalState.onSceneLoaded.add((info) => {
-            document.title = "Babylon.js - " + info.filename;
-            this.setState({ errorMessage: "" });
+            console.log("loadded")
+            document.title = "ArchVision_Studio - " + info.filename;
+            this.setState({ errorMessage: "", isFileLoaded:true });
 
             this._globalState.currentScene = info.scene;
+            
             if (this._globalState.currentScene.meshes.length === 0 && this._globalState.currentScene.clearColor.r === 1 && this._globalState.currentScene.clearColor.g === 0 && this._globalState.currentScene.clearColor.b === 0) {
                 this._logoRef.current!.className = "";
             }
@@ -55,7 +58,7 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
             }
 
             if (error.message) {
-                this.setState({ errorMessage: error.message });
+                this.setState({ errorMessage: error.message, isFileLoaded:false });
             }
         });
 
@@ -70,12 +73,12 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
         });
 
         // Keyboard
-        window.addEventListener("keydown", (event: KeyboardEvent) => {
-            // Press space to toggle footer
-            if (event.keyCode === 32 && event.target && (event.target as HTMLElement).nodeName !== "INPUT") {
-                this.setState({ isFooterVisible: !this.state.isFooterVisible });
-            }
-        });
+        // window.addEventListener("keydown", (event: KeyboardEvent) => {
+        //     // Press space to toggle footer
+        //     if (event.keyCode === 32 && event.target && (event.target as HTMLElement).nodeName !== "INPUT") {
+        //         this.setState({ isFooterVisible: !this.state.isFooterVisible });
+        //     }
+        // });
     }
 
     checkUrl() {
@@ -101,7 +104,7 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
                         break;
                     }
                     case "kiosk": {
-                        this.state = { isFooterVisible: value === "true" ? false : true, errorMessage: "" };
+                        this.setState({ isFileLoaded: value === "true" ? false : true, errorMessage: "" });
                         break;
                     }
                 }
@@ -115,6 +118,8 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
     }
 
     public render() {
+        console.log("this._globalState",this._globalState)
+        console.log("isFileLoaded",this.state.isFileLoaded)
 
         return (
             <div id="root">
@@ -123,7 +128,7 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
                     assetUrl={this._assetUrl}
                     autoRotate={this._autoRotate}
                     cameraPosition={this._cameraPosition}
-                    expanded={!this.state.isFooterVisible} />
+                    expanded={this.state.isFileLoaded} />
                 <div ref={this._clickInterceptorRef}
                     onClick={() => {
                         this._globalState.onClickInterceptorClicked.notifyObservers();
@@ -131,7 +136,7 @@ export class SandBox extends React.Component<ISandboxProps, { isFooterVisible: b
                     }}
                     className="clickInterceptor hidden"></div>
                 {
-                    this.state.isFooterVisible &&
+                    !this.state.isFileLoaded &&
                     <Footer globalState={this._globalState} />
                 }
                 <div id="logoContainer">

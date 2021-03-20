@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Col, Row, Typography, Divider, Slider, Card } from "antd";
-import "../../../../index.css";
+import "../../../../../index.css";
 import "./mine.css";
 
 const { Title } = Typography;
