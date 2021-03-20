@@ -10,7 +10,7 @@ import {
   PBRMaterial,
 } from "babylonjs";
 import { Nullable } from "babylonjs/types";
-import { MeshData, MaterialData } from "../studio/types/index";
+import { MeshData, MaterialData } from "./types/index";
 
 export function LoadAsync(
   rootUrl: string,
