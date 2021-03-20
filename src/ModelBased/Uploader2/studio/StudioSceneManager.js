@@ -114,7 +114,7 @@ export default class StudioSceneManager {
     this.mainCamera = this.scene.activeCamera;
     this.mainCamera.name = "ArcCamera";
 
-    this.mainCamera.useAutoRotationBehavior = true;
+    // this.mainCamera.useAutoRotationBehavior = true;
     this.mainCamera.useFramingBehavior = true;
     // this.mainCamera.useBouncingBehavior = true;
 
@@ -141,9 +141,13 @@ export default class StudioSceneManager {
     this.mainCamera.pinchPrecision = 200 / this.mainCamera.radius;
     this.mainCamera.upperRadiusLimit = 8 * this.mainCamera.radius;
     // this.mainCamera.lowerRadiusLimit = 55;
+    
+    this.mainCamera.lowerRadiusLimit = 0;
+    this.mainCamera.upperRadiusLimit = 500;
 
-    this.mainCamera.wheelDeltaPercentage = 0.15;
-    this.mainCamera.pinchDeltaPercentage = 0.15;
+
+    // this.mainCamera.wheelDeltaPercentage = 0.15;
+    // this.mainCamera.pinchDeltaPercentage = 0.15;
 
     this.mainCamera.attachControl(this.canvas, true);
   }
