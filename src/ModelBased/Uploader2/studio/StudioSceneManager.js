@@ -128,7 +128,25 @@ export default class StudioSceneManager {
     var worldExtends = this.scene.getWorldExtends((mesh) => {
       return mesh.isVisible && mesh.isEnabled() && mesh.name !== "MainGround";
     });
+    // var box2 = BABYLON.MeshBuilder.CreateBox("box", { size: 0.2 }, this.scene);
+
+    // var box4 = BABYLON.MeshBuilder.CreateBox(
+    //   "box1",
+    //   {
+    //     height: worldExtends.min.y - worldExtends.max.y,
+    //     width: worldExtends.min.x - worldExtends.max.x,
+    //     depth: worldExtends.min.z - worldExtends.max.z,
+    //   },
+    //   this.scene
+    // );
+    // box4.position = new BABYLON.Vector3.Center(
+    //   worldExtends.min,
+    //   worldExtends.max
+    // );
+
     console.log("worldExtends -- --->", worldExtends.min, worldExtends.max);
+    console.log("---- worldExtends -- --->", worldExtends);
+
     this.worldExtends = worldExtends;
     framingBehavior.zoomOnBoundingInfo(worldExtends.min, worldExtends.max);
 
@@ -141,10 +159,9 @@ export default class StudioSceneManager {
     this.mainCamera.pinchPrecision = 200 / this.mainCamera.radius;
     this.mainCamera.upperRadiusLimit = 8 * this.mainCamera.radius;
     // this.mainCamera.lowerRadiusLimit = 55;
-    
+
     this.mainCamera.lowerRadiusLimit = 0;
     this.mainCamera.upperRadiusLimit = 500;
-
 
     // this.mainCamera.wheelDeltaPercentage = 0.15;
     // this.mainCamera.pinchDeltaPercentage = 0.15;
@@ -179,7 +196,7 @@ export default class StudioSceneManager {
       this.scene
     );
     this.ground.isPickable = false;
-    this.ground.position.y -= 0.3;
+    // this.ground.position.y -= 0.3;
 
     //Ground Material
     this.gridMaterial = new BABYLONMaterials.GridMaterial(
