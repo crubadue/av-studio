@@ -10,7 +10,7 @@ import { KHR_materials_variants } from "babylonjs-loaders/glTF/2.0/Extensions/KH
 import { Mesh } from "babylonjs/Meshes/mesh";
 
 require("../scss/footer.scss");
-var babylonIdentity = "../img/Archvision-Logo.svg";
+var babylonIdentity = "../img/ArchVision-FullLogo.svg";
 var iconEdit = "../img/icon-edit.svg";
 var iconOpen = "../img/icon-open.svg";
 var iconIBL = "../img/icon-ibl.svg";

@@ -7,7 +7,7 @@ import { EnvironmentTools } from './tools/environmentTools';
 import { Vector3 } from 'babylonjs';
 
 require("./scss/main.scss");
-var fullScreenLogo = "./img/Archvision-Logo.svg";
+var fullScreenLogo = "./img/ArchVision-Icon.svg";
 
 interface ISandboxProps {
 }

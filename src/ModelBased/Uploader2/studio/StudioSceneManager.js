@@ -130,23 +130,6 @@ export default class StudioSceneManager {
     });
     // var box2 = BABYLON.MeshBuilder.CreateBox("box", { size: 0.2 }, this.scene);
 
-    // var box4 = BABYLON.MeshBuilder.CreateBox(
-    //   "box1",
-    //   {
-    //     height: worldExtends.min.y - worldExtends.max.y,
-    //     width: worldExtends.min.x - worldExtends.max.x,
-    //     depth: worldExtends.min.z - worldExtends.max.z,
-    //   },
-    //   this.scene
-    // );
-    // box4.position = new BABYLON.Vector3.Center(
-    //   worldExtends.min,
-    //   worldExtends.max
-    // );
-
-    console.log("worldExtends -- --->", worldExtends.min, worldExtends.max);
-    console.log("---- worldExtends -- --->", worldExtends);
-
     this.worldExtends = worldExtends;
     framingBehavior.zoomOnBoundingInfo(worldExtends.min, worldExtends.max);
 

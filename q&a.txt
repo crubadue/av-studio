@@ -1,0 +1,28 @@
+I believe I have previously mentioned that I want a library of materials that are available. This option would allow someone to swap the material that came in the studio from the original model with a material from that library.
+Maybe "link" is not the right word....
+
+New material is giving the user the interface to create a new material. (This could be a future feature is we ever support it.)
+
+I'm not sure the Apply to Object button is needed here. The idea was to give people the ability to apply a material to other objects in the model without having to browser the list of model parts and apply the materials one by one.
+
+
+---
+
+
+Q- is there any plan to handle more properties ?
+
+ 	= At the moment, I do not think so. But, I can share with you the properties that our RPC supports
+
+------
+
+Q- what i should i do now with "Apply to Object " function as i understand user should apply this material to any model node
+	= YES Or a group of model nodes
+------
+
+Q- after the user chose one of these effects does should he still having the ability to change material properties
+	= If I understand what you mean, yes... the sliders should update.
+
+-----
+
+Q- user can have the  ability to chose between "change material properties" or  "chose effect" or both of them
+	= Both should be allowed
