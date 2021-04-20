@@ -26,6 +26,8 @@ import GameManger from "../studio/GameManager";
 import { Nullable } from "babylonjs/types";
 
 import { MeshData } from "../studio/types/index";
+import { Button } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 
 require("../scss/renderingZone.scss");
 
@@ -53,6 +55,7 @@ interface IRenderingZoneProps {
 }
 
 interface StudioSceneManagerProps {
+  downloadGltfModel();
   engine: BABYLON.Engine;
   canvas: HTMLCanvasElement;
   scene: Scene;
@@ -130,7 +133,7 @@ export class RenderingZone extends React.Component<
       () => {
         Tools.ClearLogCache();
         if (this._scene) {
-          console.log("Error Loaing")
+          console.log("Error Loaing");
           // this.props.globalState.isDebugLayerEnabled = this.props.globalState.currentScene.debugLayer.isVisible();
 
           if (this.props.globalState.isDebugLayerEnabled) {
@@ -539,6 +542,29 @@ export class RenderingZone extends React.Component<
                   height: "100%",
                 }}
               >
+                {this.state?.loadedMeshData && (
+                  <Button
+                    type="primary"
+                    shape="circle"
+                    icon={<DownloadOutlined />}
+                    size={"large"}
+                    style={{
+                      position: "fixed",
+                      // display:"grid",
+                      zIndex: 1,
+                      right: "2%",
+                      bottom: "3%",
+                      width: "85px",
+                      height: "85px",
+                      fontSize: "40px",
+                    }}
+                    onClick={() => {
+                      this.state.GManager.studioSceneManager.downloadGltfModel()
+
+                    }}
+                  />
+                )}
+
                 <canvas
                   id="renderCanvas"
                   touch-action="none"

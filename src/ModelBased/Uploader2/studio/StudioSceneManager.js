@@ -1,6 +1,7 @@
 import * as BABYLON from "babylonjs";
 import * as BABYLONMaterials from "babylonjs-materials";
 import { MaterialsTypes, MaterialAttributeTypes } from "../../../AppUtils";
+import { GLTF2Export } from 'babylonjs-serializers';
 
 import LoaderManager from "./LoaderManager";
 import StudioSceneHelper from "./StudioSceneHelper";
@@ -270,6 +271,17 @@ export default class StudioSceneManager {
       newTargetValue = BABYLON.Color3.FromHexString(value);
     }
     selectedMaterial[id] = newTargetValue;
+  }
+  downloadGltfModel(){
+    console.log("downloadGltfModel")
+    // let options = {
+    //   shouldExportNode: function (node) {
+    //     return node.id === "MeshHolder";
+    //   },
+    // };
+    GLTF2Export.GLTFAsync(this.scene, "exportedModel",options).then((gltf) => {
+      gltf.downloadFiles();
+    });
   }
   //#endregion
 }

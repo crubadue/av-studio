@@ -155,8 +155,10 @@ h5.ant-typography,
 }
 
 
-
-
+.ant-btn-icon-only.ant-btn-lg > * {
+  font-size: inherit !important;
+  display: block !important;
+}
 
 /* .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab, .ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {
   background: #3a3f4b !important;
