@@ -279,7 +279,7 @@ export default class StudioSceneManager {
     //     return node.id === "MeshHolder";
     //   },
     // };
-    GLTF2Export.GLTFAsync(this.scene, "exportedModel",options).then((gltf) => {
+    GLTF2Export.GLTFAsync(this.scene, "exportedModel").then((gltf) => {
       gltf.downloadFiles();
     });
   }
