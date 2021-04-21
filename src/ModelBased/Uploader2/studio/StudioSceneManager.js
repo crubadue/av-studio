@@ -33,6 +33,7 @@ export default class StudioSceneManager {
   constructor(gameManager, scene) {
     const { canvas, engine } = gameManager;
     this.engine = engine;
+    
     this.canvas = canvas;
     this.scene = scene;
     this.handlers = null;
