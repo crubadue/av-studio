@@ -561,6 +561,7 @@ export class RenderingZone extends React.Component<
                     onClick={() => {
                       this.state.GManager.studioSceneManager.downloadGltfModel()
 
+                      
                     }}
                   />
                 )}
