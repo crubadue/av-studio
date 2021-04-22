@@ -71,7 +71,7 @@ export const GmContext = React.createContext<Nullable<GameManagerProps>>(null);
 export class RenderingZone extends React.Component<
   IRenderingZoneProps,
   {
-    GManager: GameManagerProps;
+    GManager: Nullable<GameManagerProps>;
     loadedMeshData: Nullable<MeshData>;
   }
 > {
@@ -555,7 +555,8 @@ export class RenderingZone extends React.Component<
                           fontSize: "30px",
                         }}
                         onClick={() => {
-                          this.state.GManager.studioSceneManager.downloadGltfModel();
+                          GManager?.studioSceneManager.downloadGltfModel();
+                          //
                         }}
                       />
                     )}
