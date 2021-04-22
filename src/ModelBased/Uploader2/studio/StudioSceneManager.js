@@ -1,7 +1,7 @@
 import * as BABYLON from "babylonjs";
 import * as BABYLONMaterials from "babylonjs-materials";
 import { MaterialsTypes, MaterialAttributeTypes } from "../../../AppUtils";
-import { GLTF2Export } from 'babylonjs-serializers';
+import { GLTF2Export } from "babylonjs-serializers";
 
 import LoaderManager from "./LoaderManager";
 import StudioSceneHelper from "./StudioSceneHelper";
@@ -33,7 +33,7 @@ export default class StudioSceneManager {
   constructor(gameManager, scene) {
     const { canvas, engine } = gameManager;
     this.engine = engine;
-    
+
     this.canvas = canvas;
     this.scene = scene;
     this.handlers = null;
@@ -234,7 +234,7 @@ export default class StudioSceneManager {
 
   //#endregion
 
-  //#region UserInput (Mouse)
+  //#region UserInp1ut (Mouse)
   onPointerDown(ev) {
     // console.log("Mouse Down");
   }
@@ -273,15 +273,36 @@ export default class StudioSceneManager {
     }
     selectedMaterial[id] = newTargetValue;
   }
-  downloadGltfModel(){
-    console.log("downloadGltfModel")
-    // let options = {
-    //   shouldExportNode: function (node) {
-    //     return node.id === "MeshHolder";
-    //   },
-    // };
-    GLTF2Export.GLTFAsync(this.scene, "exportedModel").then((gltf) => {
+  downloadGltfModel() {
+    console.log("downloadGltfModel");
+    let selectedIds = [
+      "MainGround",
+      "axisX",
+      "axisZ",
+      "HemiLight",
+      "DirectionalLight",
+      "MeshHolder",
+    ];
+
+    let parentMesh = this.scene.getMeshesByID("MeshHolder")[0];
+    let exportMesh = new BABYLON.Mesh("exportMesh", this.scene);
+    parentMesh.getChildMeshes(true).forEach((mesh) => {
+      mesh.parent = exportMesh;
+    });
+
+    console.log("selectedIds", selectedIds);
+    let options = {
+      shouldExportNode: (mesh) => {
+        return !selectedIds.includes(mesh.name);
+      },
+    };
+
+    GLTF2Export.GLTFAsync(this.scene, "exportedModel", options).then((gltf) => {
       gltf.downloadFiles();
+
+      exportMesh.getChildMeshes(true).forEach((mesh) => {
+        mesh.parent = parentMesh;
+      });
     });
   }
   //#endregion

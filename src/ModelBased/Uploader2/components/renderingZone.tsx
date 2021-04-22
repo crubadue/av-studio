@@ -83,6 +83,10 @@ export class RenderingZone extends React.Component<
 
   public constructor(props: IRenderingZoneProps) {
     super(props);
+    this.state = {
+      loadedMeshData: null,
+      GManager: null,
+    };
   }
 
   studioSceneHandlers = {
@@ -350,13 +354,11 @@ export class RenderingZone extends React.Component<
   }
 
   onSceneLoaded(filename: string) {
-    console.log("render ZONE");
     this._engine.clearInternalTexturesCache();
     this._scene.skipFrustumClipping = true;
 
     const GManager = new GameManger(this._canvas, this._engine, this._scene);
     GManager.studioSceneManager.handlers = this.studioSceneHandlers; //Hnadlers
-    console.log("GManger", GManager);
     this.setState(
       {
         GManager,
@@ -379,7 +381,7 @@ export class RenderingZone extends React.Component<
         delete this._currentPluginName;
       }
     );
-    console.log("after ZONE1");
+    // console.log("after ZONE1");
   }
 
   loadTextureAsset(url: string): Scene {
@@ -494,7 +496,7 @@ export class RenderingZone extends React.Component<
 
         loader.onValidatedObservable.add((results) => {
           if (results.issues.numErrors > 0) {
-            console.log("results.issues.numErrors");
+            // console.log("results.issues.numErrors");
             // this.props.globalState.showDebugLayer();
           }
         });
@@ -514,13 +516,14 @@ export class RenderingZone extends React.Component<
   }
 
   public render() {
-    console.log("this.state", this.state);
     const { expanded } = this.props;
-    console.log("this.state", this.state);
+    const { GManager, loadedMeshData } = this.state;
+
+    console.log("loadedMeshData", loadedMeshData);
 
     return (
       <div id="canvasZone" className={expanded ? "expanded" : ""}>
-        <GmContext.Provider value={expanded ? this.state.GManager : null}>
+        <GmContext.Provider value={expanded ? GManager : null}>
           {
             <Row style={{ height: "100%" }}>
               <Col
@@ -532,8 +535,31 @@ export class RenderingZone extends React.Component<
                   overflow: "hidden",
                 }}
               >
-                {this.state?.loadedMeshData && (
-                  <LeftSideMenu loadedMeshData={this.state?.loadedMeshData} />
+                {loadedMeshData && (
+                  <>
+                    <LeftSideMenu loadedMeshData={loadedMeshData} />
+                    {loadedMeshData && (
+                      <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<DownloadOutlined />}
+                        size={"large"}
+                        style={{
+                          position: "fixed",
+                          // display:"grid",
+                          zIndex: 1,
+                          right: "2%",
+                          bottom: "3%",
+                          width: "70px",
+                          height: "70px",
+                          fontSize: "30px",
+                        }}
+                        onClick={() => {
+                          this.state.GManager.studioSceneManager.downloadGltfModel();
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </Col>
               <Col
@@ -542,35 +568,13 @@ export class RenderingZone extends React.Component<
                   height: "100%",
                 }}
               >
-                {this.state?.loadedMeshData && (
-                  <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<DownloadOutlined />}
-                    size={"large"}
-                    style={{
-                      position: "fixed",
-                      // display:"grid",
-                      zIndex: 1,
-                      right: "2%",
-                      bottom: "3%",
-                      width: "85px",
-                      height: "85px",
-                      fontSize: "40px",
-                    }}
-                    onClick={() => {
-                      this.state.GManager.studioSceneManager.downloadGltfModel()
-
-                      
-                    }}
-                  />
-                )}
-
-                <canvas
-                  id="renderCanvas"
-                  touch-action="none"
-                  onContextMenu={(evt) => evt.preventDefault()}
-                ></canvas>
+                <>
+                  <canvas
+                    id="renderCanvas"
+                    touch-action="none"
+                    onContextMenu={(evt) => evt.preventDefault()}
+                  ></canvas>
+                </>
               </Col>
             </Row>
           }
