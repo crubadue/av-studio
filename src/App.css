@@ -77,7 +77,6 @@
   height: 100% !important;
 }
 
-
 .ant-divider-horizontal.ant-divider-with-text {
   color: #cacad4 !important;
   border-top-color: rgb(255 253 253 / 40%) !important;
@@ -137,7 +136,7 @@ h5.ant-typography,
 
 .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
   background-color: #3a3f4b !important;
-  color: #3e90ff !important;
+  color: #ff0000 !important;
 }
 
 /*  */
@@ -154,11 +153,18 @@ h5.ant-typography,
   border: solid 2px #3e90ff !important;
 }
 
-
 .ant-btn-icon-only.ant-btn-lg > * {
   font-size: inherit !important;
   display: block !important;
 }
+
+.ant-select-arrow {
+  color: rgb(255 255 255) !important;
+}
+
+/* .ant-select-item-option-content {
+  background-color: #ffffff1f !important;
+} */
 
 /* .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab, .ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {
   background: #3a3f4b !important;

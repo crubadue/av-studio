@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import NodesTab from "./Nodes";
+import { Tabs, Row, Col } from "antd";
 import MaterialTab from "./Materials";
+import SettingsTab from "./Settings";
+
+const { TabPane } = Tabs;
 
 export const LeftMenuTabs = {
   Nodes: "NodesTab",
@@ -21,7 +25,22 @@ const LeftSideMenu = (props) => {
     }
   }, [selectedTab, loadedMeshData.nodes, loadedMeshData.materials]);
 
-  return <>{renderTabs()}</>;
+  function onChange(key) {
+    console.log(key);
+  }
+
+  return (
+    <>
+      <Tabs onChange={onChange} type="card" style={{ height: "100%" }}>
+        <TabPane tab="Materials" key="1" style={{ height: "100%" }}>
+          <MaterialTab materialList={loadedMeshData.materials} />
+        </TabPane>
+        <TabPane tab="Settings" key="2" style={{ height: "100%" }}>
+          <SettingsTab materialList={loadedMeshData.materials} />
+        </TabPane>
+      </Tabs>
+    </>
+  );
 };
 
 export default LeftSideMenu;

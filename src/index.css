@@ -64,7 +64,9 @@ code {
   position: fixed !important;
   margin-top: 6% !important;
 }
-
+input, button, select, optgroup, textarea {
+  color: red !important;
+}
 
 
 /* .k-upload .k-upload-files {

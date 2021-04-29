@@ -5,6 +5,7 @@ import { GLTF2Export } from "babylonjs-serializers";
 
 import LoaderManager from "./LoaderManager";
 import StudioSceneHelper from "./StudioSceneHelper";
+import { HDRList } from "../../../AppUtils";
 
 // import * as BABYLONMaterials from 'babylonjs-materials';
 import "babylonjs-inspector";
@@ -230,8 +231,10 @@ export default class StudioSceneManager {
     );
     this.RenderPipline.samples = 4;
     this.RenderPipline.imageProcessingEnabled = false;
-  }
 
+    //Apply Default Scene Environment
+    this.applySceneEnvironment(HDRList[0].id);
+  }
   //#endregion
 
   //#region UserInp1ut (Mouse)
@@ -305,5 +308,34 @@ export default class StudioSceneManager {
       });
     });
   }
+  applySceneEnvironment(environmentId) {
+    //Create CubicTexture
+    // let skyboxCubecTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+    //   "https://playground.babylonjs.com/textures/environment.env",
+    //   this.scene
+    // );
+    // skyboxCubecTexture.level = 1;
+    // this.scene.environmentTexture = skyboxCubecTexture;
+
+    let selectedEnvironment = HDRList.find((hdr) => hdr.id === environmentId);
+    if (selectedEnvironment) {
+      console.log("selectedEnvironment", selectedEnvironment);
+      if (this.scene.environmentTexture)
+        this.scene.environmentTexture.dispose();
+
+      this.scene.environmentTexture = new BABYLON.CubeTexture(
+        selectedEnvironment.env,
+        this.scene
+      );
+      this.scene.environmentIntensity = 1;
+    }
+  }
+  customizeSceneEnvironment(environmentKey, value) {
+    if (this.scene[environmentKey]) {
+      //doableKey
+      this.scene[environmentKey] = value;
+    }
+  }
   //#endregion
 }
+// environmentIntensity
