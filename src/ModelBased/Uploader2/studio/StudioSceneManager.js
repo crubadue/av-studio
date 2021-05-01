@@ -328,12 +328,38 @@ export default class StudioSceneManager {
         this.scene
       );
       this.scene.environmentIntensity = 1;
+
+      let hdrSkyBox = this.scene.getMeshByID("hdrSkyBox");
+      if (hdrSkyBox) {
+        console.log("Ssssssssss", hdrSkyBox);
+        if (hdrSkyBox.material) hdrSkyBox.material.dispose();
+        hdrSkyBox.dispose();
+      }
+      var hdrTexture = new BABYLON.CubeTexture(
+        selectedEnvironment.env,
+        this.scene
+      );
+      this.scene.createDefaultSkybox(hdrTexture, true, 1000, 0.5);
     }
   }
   customizeSceneEnvironment(environmentKey, value) {
     if (this.scene[environmentKey]) {
       //doableKey
       this.scene[environmentKey] = value;
+    }
+  }
+  toggleSkyBoxBackground(checked) {
+    let hdrSkyBox = this.scene.getMeshByID("hdrSkyBox");
+    if (hdrSkyBox) {
+      hdrSkyBox.setEnabled(checked);
+      if (checked) this.controlSkyBoxBlur(0.5);
+    }
+  }
+  controlSkyBoxBlur(value) {
+    let skyboxMat = this.scene.getMaterialByID("skyBox");
+    if (skyboxMat) {
+      //doableKey
+      skyboxMat.microSurface = 1 - value;
     }
   }
   //#endregion

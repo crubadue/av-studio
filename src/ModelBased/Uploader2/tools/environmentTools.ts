@@ -36,6 +36,7 @@ export class EnvironmentTools {
 
     public static HookWithEnvironmentChange(globalState: GlobalState) {
         globalState.onEnvironmentChanged.add((option) => {
+            
             this.SkyboxPath = "";
             let index = EnvironmentTools.SkyboxesNames.indexOf(option);
 

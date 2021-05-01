@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { Col, Row, Select, Typography, Slider, Divider, Popover } from "antd";
+import { Col, Row, Select, Typography, Slider, Switch, Popover } from "antd";
 import "./index.css";
 import { HDRList, EnvironmentKeys } from "../../../../../AppUtils";
 import { GmContext } from "../../../components/renderingZone";
@@ -14,6 +14,8 @@ const SettingsTab = (props) => {
   const [selectedOpt, setSelectedOpt] = useState(
     HDRList.length ? HDRList[0].id : ""
   );
+  const [isBackground, setIsBackground] = useState(true);
+
   const gameManager = useContext(GmContext);
 
   function handleEnvChange(value) {
@@ -22,6 +24,15 @@ const SettingsTab = (props) => {
   }
   function handleSliderChange(key, value) {
     gameManager.studioSceneManager.customizeSceneEnvironment(key, value);
+  }
+
+  const onToggleBackground = useCallback((checked) => {
+    setIsBackground(checked);
+    gameManager.studioSceneManager.toggleSkyBoxBackground(checked);
+  }, []);
+
+  function handleBlurSliderChange(value) {
+    gameManager.studioSceneManager.controlSkyBoxBlur(value);
   }
 
   return (
@@ -88,13 +99,49 @@ const SettingsTab = (props) => {
             }
           />
         </div>
-        <div style={{ width: "100%", marginTop: "5vh" }}>
+      </Col>
+      <Col span={24}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            width: "100%",
+            marginTop: "3vh",
+          }}
+        >
           <Text type="secondary" className="slideText">
-            Blur :
+            Show as Background :
           </Text>
-          <Slider disabled={true} defaultValue={30} />
+          <Switch
+            style={{ marginTop: "5px" }}
+            defaultChecked
+            checked={isBackground}
+            onChange={onToggleBackground}
+          />
+          {/* <Checkbox style={{ marginTop: "5px" }} defaultChecked /> */}
         </div>
       </Col>
+      {isBackground && (
+        <Col span={24}>
+          <div
+            style={{
+              width: "100%",
+              marginTop: "3vh",
+            }}
+          >
+            <Text type="secondary" className="slideText">
+              Blur :
+            </Text>
+            <Slider
+              defaultValue={0.5}
+              min={0}
+              max={1}
+              step={0.1}
+              onChange={handleBlurSliderChange}
+            />
+          </div>
+        </Col>
+      )}
     </Row>
   );
 };
