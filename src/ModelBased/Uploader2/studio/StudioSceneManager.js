@@ -99,6 +99,8 @@ export default class StudioSceneManager {
     //Create StudioScene instance
     this.studioSceneHelper = new StudioSceneHelper(this);
 
+    // var box2 = BABYLON.MeshBuilder.CreateBox("box", {size: 1}, this.scene);
+
     //Installation
     this.createCamera();
     this.createGround();
@@ -106,6 +108,7 @@ export default class StudioSceneManager {
 
     // this.loaderManager.loadMainMesh(); //start load mainBike
     console.log("All OK !!");
+    // this.sc
     // this.scene.debugLayer.show();
   }
   createCamera() {
@@ -276,7 +279,8 @@ export default class StudioSceneManager {
     }
     selectedMaterial[id] = newTargetValue;
   }
-  downloadGltfModel() {
+
+  downloadGltfModel(isGltf=true) {
     console.log("downloadGltfModel");
     let selectedIds = [
       "MainGround",
@@ -285,6 +289,7 @@ export default class StudioSceneManager {
       "HemiLight",
       "DirectionalLight",
       "MeshHolder",
+      "hdrSkyBox",
     ];
 
     let parentMesh = this.scene.getMeshesByID("MeshHolder")[0];
@@ -300,13 +305,27 @@ export default class StudioSceneManager {
       },
     };
 
-    GLTF2Export.GLTFAsync(this.scene, "exportedModel", options).then((gltf) => {
-      gltf.downloadFiles();
+    if (isGltf) {
+      GLTF2Export.GLTFAsync(this.scene, "exportedModel", options).then(
+        (gltf) => {
+          gltf.downloadFiles();
 
-      exportMesh.getChildMeshes(true).forEach((mesh) => {
-        mesh.parent = parentMesh;
+          exportMesh.getChildMeshes(true).forEach((mesh) => {
+            mesh.parent = parentMesh;
+          });
+          exportMesh.dispose();
+        }
+      );
+    } else {
+      GLTF2Export.GLBAsync(this.scene, "exportedModel", options).then((glb) => {
+        glb.downloadFiles();
+
+        exportMesh.getChildMeshes(true).forEach((mesh) => {
+          mesh.parent = parentMesh;
+        });
+        exportMesh.dispose();
       });
-    });
+    }
   }
   applySceneEnvironment(environmentId) {
     //Create CubicTexture

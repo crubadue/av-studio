@@ -139,6 +139,14 @@ h5.ant-typography,
   color: #ff0000 !important;
 }
 
+.ant-form-item-label > label {
+  color: rgb(255 255 255 / 85%) !important;
+}
+
+span.ant-radio + * {
+  padding-left: 10px !important;
+  color: white !important;
+}
 /*  */
 
 .ant-slider-track {

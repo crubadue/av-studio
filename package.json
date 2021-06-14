@@ -13,6 +13,7 @@
     "@types/node": "^14.14.34",
     "@types/react": "^17.0.3",
     "antd": "^4.12.3",
+    "antd-img-crop": "^3.14.1",
     "babel-plugin-import": "^1.13.3",
     "babylonjs": "^5.0.0-alpha.17",
     "babylonjs-gui": "^5.0.0-alpha.14",

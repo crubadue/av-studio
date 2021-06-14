@@ -3,6 +3,7 @@ import NodesTab from "./Nodes";
 import { Tabs, Row, Col } from "antd";
 import MaterialTab from "./Materials";
 import SettingsTab from "./Settings";
+import PropertiesTab from "./Properties";
 
 const { TabPane } = Tabs;
 
@@ -27,6 +28,7 @@ const LeftSideMenu = (props) => {
 
   function onChange(key) {
     console.log(key);
+    
   }
 
   return (
@@ -37,6 +39,9 @@ const LeftSideMenu = (props) => {
         </TabPane>
         <TabPane tab="Settings" key="2" style={{ height: "100%" }}>
           <SettingsTab materialList={loadedMeshData.materials} />
+        </TabPane>
+        <TabPane tab="Properties" key="3" style={{ height: "100%" }}>
+          <PropertiesTab materialList={loadedMeshData.materials} />
         </TabPane>
       </Tabs>
     </>

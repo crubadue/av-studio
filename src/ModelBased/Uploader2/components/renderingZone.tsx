@@ -55,7 +55,7 @@ interface IRenderingZoneProps {
 }
 
 interface StudioSceneManagerProps {
-  downloadGltfModel();
+  downloadGltfModel(isGltf :boolean);
   engine: BABYLON.Engine;
   canvas: HTMLCanvasElement;
   scene: Scene;
@@ -527,7 +527,7 @@ export class RenderingZone extends React.Component<
           {
             <Row style={{ height: "100%" }}>
               <Col
-                span={expanded ? 5 : 0}
+                span={expanded ? 6 : 0}
                 style={{
                   height: "100%",
                   backgroundColor: "#282c34",
@@ -548,6 +548,28 @@ export class RenderingZone extends React.Component<
                           position: "fixed",
                           // display:"grid",
                           zIndex: 1,
+                          right: "9%",
+                          bottom: "3%",
+                          width: "70px",
+                          height: "70px",
+                          fontSize: "30px",
+                        }}
+                        onClick={() => {
+                          GManager?.studioSceneManager.downloadGltfModel(false);
+                          //
+                        }}
+                      />
+                    )}
+                    {loadedMeshData && (
+                      <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<DownloadOutlined />}
+                        size={"large"}
+                        style={{
+                          position: "fixed",
+                          // display:"grid",
+                          zIndex: 1,
                           right: "2%",
                           bottom: "3%",
                           width: "70px",
@@ -555,7 +577,7 @@ export class RenderingZone extends React.Component<
                           fontSize: "30px",
                         }}
                         onClick={() => {
-                          GManager?.studioSceneManager.downloadGltfModel();
+                          GManager?.studioSceneManager.downloadGltfModel(true);
                           //
                         }}
                       />
@@ -564,7 +586,7 @@ export class RenderingZone extends React.Component<
                 )}
               </Col>
               <Col
-                span={expanded ? 19 : 24}
+                span={expanded ? 18 : 24}
                 style={{
                   height: "100%",
                 }}

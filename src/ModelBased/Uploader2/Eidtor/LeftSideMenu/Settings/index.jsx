@@ -7,6 +7,7 @@ import { GmContext } from "../../../components/renderingZone";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
+
 const imagePlaceHolder = "./hdri/imagePlaceHolder.png";
 
 const SettingsTab = (props) => {
