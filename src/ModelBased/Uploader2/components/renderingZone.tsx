@@ -300,6 +300,7 @@ export class RenderingZone extends React.Component<
           scene: this._scene,
           message: "Scene loaded but several errors were found",
         });
+        
       }
       //    this._canvas.style.opacity = "1";
       let camera = this._scene.activeCamera! as ArcRotateCamera;

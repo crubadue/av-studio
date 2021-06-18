@@ -114,12 +114,12 @@ export default class StudioSceneManager {
   createCamera() {
     if (this.scene.activeCamera) {
       this.scene.activeCamera.dispose();
+      
     }
 
     this.scene.createDefaultCamera(true);
     this.mainCamera = this.scene.activeCamera;
     this.mainCamera.name = "ArcCamera";
-
     // this.mainCamera.useAutoRotationBehavior = true;
     this.mainCamera.useFramingBehavior = true;
     // this.mainCamera.useBouncingBehavior = true;
@@ -144,6 +144,7 @@ export default class StudioSceneManager {
     this.mainCamera.minZ = 0.2;
     this.mainCamera.target = new BABYLON.Vector3(0, 0.5, 0);
     this.mainCamera.wheelPrecision = 10;
+    this.mainCamera.wheelDeltaPercentage = 0.015;
 
     this.mainCamera.pinchPrecision = 200 / this.mainCamera.radius;
     this.mainCamera.upperRadiusLimit = 8 * this.mainCamera.radius;
@@ -157,6 +158,7 @@ export default class StudioSceneManager {
 
     this.mainCamera.attachControl(this.canvas, true);
   }
+
   createGround() {
     let groundSize = 50;
     if (this.worldExtends) {
