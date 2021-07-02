@@ -19,6 +19,8 @@ import { FramingBehavior } from "babylonjs/Behaviors/Cameras/framingBehavior";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import LeftSideMenu from "../Eidtor/LeftSideMenu";
+import EditorButtons from "../Eidtor/EditorButtons";
+
 import { GlobalState } from "../globalState";
 import { EnvironmentTools } from "../tools/environmentTools";
 import * as LoaderManager from "../studio/LoaderManager";
@@ -27,7 +29,6 @@ import { Nullable } from "babylonjs/types";
 
 import { MeshData } from "../studio/types/index";
 import { Button } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
 
 require("../scss/renderingZone.scss");
 
@@ -55,7 +56,7 @@ interface IRenderingZoneProps {
 }
 
 interface StudioSceneManagerProps {
-  downloadGltfModel(isGltf :boolean);
+  downloadGltfModel(isGltf: boolean);
   engine: BABYLON.Engine;
   canvas: HTMLCanvasElement;
   scene: Scene;
@@ -300,7 +301,6 @@ export class RenderingZone extends React.Component<
           scene: this._scene,
           message: "Scene loaded but several errors were found",
         });
-        
       }
       //    this._canvas.style.opacity = "1";
       let camera = this._scene.activeCamera! as ArcRotateCamera;
@@ -344,9 +344,8 @@ export class RenderingZone extends React.Component<
 
       if (pbrPresent) {
         if (!this._scene.environmentTexture) {
-          this._scene.environmentTexture = EnvironmentTools.LoadSkyboxPathTexture(
-            this._scene
-          );
+          this._scene.environmentTexture =
+            EnvironmentTools.LoadSkyboxPathTexture(this._scene);
         }
       } else {
         this._scene.createDefaultLight();
@@ -489,9 +488,8 @@ export class RenderingZone extends React.Component<
           (
             extension: import("babylonjs-loaders/glTF/index").IGLTFLoaderExtension
           ) => {
-            this.props.globalState.glTFLoaderExtensions[
-              extension.name
-            ] = extension;
+            this.props.globalState.glTFLoaderExtensions[extension.name] =
+              extension;
           }
         );
 
@@ -526,81 +524,40 @@ export class RenderingZone extends React.Component<
       <div id="canvasZone" className={expanded ? "expanded" : ""}>
         <GmContext.Provider value={expanded ? GManager : null}>
           {
-            <Row style={{ height: "100%" }}>
-              <Col
-                span={expanded ? 6 : 0}
-                style={{
-                  height: "100%",
-                  backgroundColor: "#282c34",
-                  padding: "5px 3px",
-                  overflow: "hidden",
-                }}
-              >
-                {loadedMeshData && (
+            <>
+              {loadedMeshData && <EditorButtons />}
+              <Row style={{ height: "100%" }}>
+                <Col
+                  span={expanded ? 6 : 0}
+                  style={{
+                    height: "100%",
+                    backgroundColor: "#282c34",
+                    padding: "5px 3px",
+                    overflow: "hidden",
+                  }}
+                >
+                  {loadedMeshData && (
+                    <>
+                      <LeftSideMenu loadedMeshData={loadedMeshData} />
+                    </>
+                  )}
+                </Col>
+                <Col
+                  span={expanded ? 18 : 24}
+                  style={{
+                    height: "100%",
+                  }}
+                >
                   <>
-                    <LeftSideMenu loadedMeshData={loadedMeshData} />
-                    {loadedMeshData && (
-                      <Button
-                        type="primary"
-                        shape="circle"
-                        icon={<DownloadOutlined />}
-                        size={"large"}
-                        style={{
-                          position: "fixed",
-                          // display:"grid",
-                          zIndex: 1,
-                          right: "9%",
-                          bottom: "3%",
-                          width: "70px",
-                          height: "70px",
-                          fontSize: "30px",
-                        }}
-                        onClick={() => {
-                          GManager?.studioSceneManager.downloadGltfModel(false);
-                          //
-                        }}
-                      />
-                    )}
-                    {loadedMeshData && (
-                      <Button
-                        type="primary"
-                        shape="circle"
-                        icon={<DownloadOutlined />}
-                        size={"large"}
-                        style={{
-                          position: "fixed",
-                          // display:"grid",
-                          zIndex: 1,
-                          right: "2%",
-                          bottom: "3%",
-                          width: "70px",
-                          height: "70px",
-                          fontSize: "30px",
-                        }}
-                        onClick={() => {
-                          GManager?.studioSceneManager.downloadGltfModel(true);
-                          //
-                        }}
-                      />
-                    )}
+                    <canvas
+                      id="renderCanvas"
+                      touch-action="none"
+                      onContextMenu={(evt) => evt.preventDefault()}
+                    ></canvas>
                   </>
-                )}
-              </Col>
-              <Col
-                span={expanded ? 18 : 24}
-                style={{
-                  height: "100%",
-                }}
-              >
-                <>
-                  <canvas
-                    id="renderCanvas"
-                    touch-action="none"
-                    onContextMenu={(evt) => evt.preventDefault()}
-                  ></canvas>
-                </>
-              </Col>
-            </Row>
+                </Col>
+              </Row>
+            </>
           }
         </GmContext.Provider>
       </div>

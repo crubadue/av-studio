@@ -43,6 +43,8 @@ const LeftSideMenu = (props) => {
         <TabPane tab="Properties" key="3" style={{ height: "100%" }}>
           <PropertiesTab materialList={loadedMeshData.materials} />
         </TabPane>
+        <TabPane tab="View" key="4" style={{ height: "100%" }}>
+        </TabPane>
       </Tabs>
     </>
   );

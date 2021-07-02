@@ -6,7 +6,7 @@ export default class StudioSceneHelper {
   }
 
   //#region  MainSceneProperties
-  createCoordinateAxes(size, scene) {
+  createCoordinateAxes(parent, size, scene) {
     // show axi
 
     var axisX = BABYLON.Mesh.CreateLines(
@@ -18,8 +18,9 @@ export default class StudioSceneHelper {
       scene
     );
 
+
     var MinaxisX = BABYLON.Mesh.CreateLines(
-      "axisX",
+      "MinaxisX",
       [
         new BABYLON.Vector3(0, 0, size),
         new BABYLON.Vector3(-size, 0, size),
@@ -29,6 +30,10 @@ export default class StudioSceneHelper {
     axisX.color = MinaxisX.color = new BABYLON.Color3(1, 0, 0);
     axisX.isPickable = false;
     MinaxisX.isPickable = false;
+
+    //Parent
+    axisX.parent = parent;
+    MinaxisX.parent = parent;
 
     var axisZ = BABYLON.Mesh.CreateLines(
       "axisZ",
@@ -40,7 +45,7 @@ export default class StudioSceneHelper {
     );
 
     var MinaxisZ = BABYLON.Mesh.CreateLines(
-      "axisZ",
+      "MinaxisZ",
       [
         new BABYLON.Vector3(size, 0, 0),
         new BABYLON.Vector3(size, 0, -size),
@@ -51,5 +56,9 @@ export default class StudioSceneHelper {
     axisZ.color = MinaxisZ.color = new BABYLON.Color3(0, 0, 1);
     axisZ.isPickable = false;
     MinaxisZ.isPickable = false;
+
+    //Parent
+    axisZ.parent = parent;
+    MinaxisZ.parent = parent;
   }
 }

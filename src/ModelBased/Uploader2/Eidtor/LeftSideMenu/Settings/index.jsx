@@ -1,12 +1,20 @@
 import React, { useCallback, useContext, useMemo, useState } from "react";
-import { Col, Row, Select, Typography, Slider, Switch, Popover } from "antd";
+import {
+  Col,
+  Row,
+  Select,
+  Typography,
+  Slider,
+  Switch,
+  Checkbox,
+  Button,
+} from "antd";
 import "./index.css";
 import { HDRList, EnvironmentKeys } from "../../../../../AppUtils";
 import { GmContext } from "../../../components/renderingZone";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
-
 
 const imagePlaceHolder = "./hdri/imagePlaceHolder.png";
 
@@ -35,6 +43,14 @@ const SettingsTab = (props) => {
   function handleBlurSliderChange(value) {
     gameManager.studioSceneManager.controlSkyBoxBlur(value);
   }
+
+  const onToggleGrid = useCallback((e) => {
+    gameManager.studioSceneManager.toggleGridGround(e.target.checked);
+  }, []);
+
+  const handleResetCameraView = useCallback(()=>{
+    gameManager.studioSceneManager.resetCameraView();
+  },[])
 
   return (
     <Row style={{ padding: "8%", width: "100%" }}>
@@ -143,6 +159,33 @@ const SettingsTab = (props) => {
           </div>
         </Col>
       )}
+      <Col span={24}>
+        <div
+          style={{
+            width: "100%",
+            marginTop: "3vh",
+          }}
+        >
+          <Text type="secondary" className="slideText">
+            Grid :
+          </Text>
+          <Checkbox
+            style={{ marginLeft: "10px" }}
+            defaultChecked={true}
+            onChange={onToggleGrid}
+          />
+        </div>
+      </Col>
+      <Col span={24}>
+        <div
+          style={{
+            width: "100%",
+            marginTop: "3vh",
+          }}
+        >
+          <Button onClick={handleResetCameraView} type="primary">Reset Camera View</Button>
+        </div>
+      </Col>
     </Row>
   );
 };

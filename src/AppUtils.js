@@ -34,6 +34,12 @@ export const HDRList = [
       env: "./environments/defaultEnvironment.env",
     },
     {
+      id: "whiteEnvironment",
+      name: "White Environment",
+      image: "./Ui/Hdrs/white.png",
+      env: null,
+    },
+    {
       id: "tunnel",
       name: "Tunnel",
       image: "./Ui/Hdrs/tunnel.jpg",

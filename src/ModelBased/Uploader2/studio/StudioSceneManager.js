@@ -30,6 +30,34 @@ export function createScene(engine) {
   return scene;
 }
 
+export function createShadowGenrator(scene){
+  // let dirLight = new BABYLON.DirectionalLight(
+  //   "DirectionalLight",
+  //   new BABYLON.Vector3(.3, -1, 0.2),
+  //   scene
+  // );
+  // dirLight.position = new BABYLON.Vector3(3, 9, 3);
+
+  // light1
+	var dirLight = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-1, -2, -1), scene);
+	dirLight.position = new BABYLON.Vector3(20, 40, 20);
+	dirLight.intensity = 0.5;
+
+
+  // ShadowGenerator
+  let shadowGenerator = new BABYLON.ShadowGenerator(512, dirLight);
+  shadowGenerator.useBlurExponentialShadowMap = true;
+  shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_HIGH;
+  // this.shadowGenerator.forceBackFacesOnly = true;
+  // this.shadowGenerator.blurKernel = 32;
+  // this.shadowGenerator.depthScale = 150;
+  dirLight.intensity = 1;
+  dirLight.shadowMinZ = 0;
+  dirLight.shadowMaxZ = 700;
+
+  return shadowGenerator;
+}
+
 export default class StudioSceneManager {
   constructor(gameManager, scene) {
     const { canvas, engine } = gameManager;
@@ -49,6 +77,14 @@ export default class StudioSceneManager {
     this.skyboxPath =
       "https://assets.babylonjs.com/environments/environmentSpecular.env";
 
+    //
+    this.initCamValues = {
+      alpha: 0,
+      beta: 0,
+      raduis: 0,
+      target: new BABYLON.Vector3.Zero(),
+    }
+
     this.adjustTheScene();
   }
 
@@ -56,7 +92,7 @@ export default class StudioSceneManager {
   adjustTheScene() {
     //Create Bts Scene
     //Adjust Scene
-    this.scene.clearColor = new BABYLON.Color4(0.09, 0.1, 0.11, 1.0);
+    this.scene.clearColor = new BABYLON.Color4(1, 1, 1, 1.0);
     this.scene.imageProcessingConfiguration.contrast = 2.0;
     this.scene.imageProcessingConfiguration.exposure = 0.6;
     // this.scene.imageProcessingConfiguration.toneMappingEnabled = true;
@@ -114,12 +150,21 @@ export default class StudioSceneManager {
   createCamera() {
     if (this.scene.activeCamera) {
       this.scene.activeCamera.dispose();
-      
     }
 
     this.scene.createDefaultCamera(true);
     this.mainCamera = this.scene.activeCamera;
     this.mainCamera.name = "ArcCamera";
+
+    this.initCamValues ={
+      alpha : this.mainCamera.alpha,
+      beta : this.mainCamera.beta,
+      radius: this.mainCamera.radius,
+      target: this.mainCamera.target.clone(),
+    }
+
+    console.log("this.initCamValues 1", this.initCamValues)
+
     // this.mainCamera.useAutoRotationBehavior = true;
     this.mainCamera.useFramingBehavior = true;
     // this.mainCamera.useBouncingBehavior = true;
@@ -205,24 +250,61 @@ export default class StudioSceneManager {
 
     this.ground.material = this.gridMaterial;
 
+
+    //Create MirrorGround
+    let mirrorGround = BABYLON.Mesh.CreateGround(
+      "MirrorGround",
+      groundSize * 1,
+      groundSize * 1,
+      10,
+      this.scene
+    );
+    mirrorGround.position.y = -0.15;
+    mirrorGround.isPickable = false;
+    mirrorGround.receiveShadows = true;
+
+    //background material.
+     var backgroundMaterial = new BABYLON.BackgroundMaterial(
+      "backgroundMaterial",
+      this.scene
+    );
+    backgroundMaterial.opacityFresnel = false;
+    backgroundMaterial.shadowLevel = .9;
+    backgroundMaterial.alpha = 0.2;
+
+    var groundMaterial = new BABYLON.StandardMaterial("backgroundMaterial 1", this.scene);
+    groundMaterial.alpha = 0.2;
+    groundMaterial.diffuseColor = new BABYLON.Color3(65/255,65/255,65/255);
+    mirrorGround.material = groundMaterial;
+
+    //Mirror
+    // this.mirror = new BABYLON.MirrorTexture("mirror", 512, this.scene);
+    // this.mirror.mirrorPlane = new BABYLON.Plane(0, -1, 0, 0);
+    // this.mirror.adaptiveBlurKernel = 32;
+    // backgroundMaterial.reflectionTexture = this.mirror;
+    // backgroundMaterial.reflectionFresnel = true;
+    // backgroundMaterial.reflectionStandardFresnelWeight = 0.9;
+    // backgroundMaterial.reflectionTexture.level = 0.8;
+    // mirrorGround.material = backgroundMaterial;
+
     console.log("Sdsd", this.studioSceneHelper);
-    this.studioSceneHelper.createCoordinateAxes(groundSize / 2, this.scene);
+    this.studioSceneHelper.createCoordinateAxes(this.ground, groundSize / 2, this.scene);
   }
   prepareLighting() {
     let hemiLight = new BABYLON.HemisphericLight(
       "HemiLight",
-      new BABYLON.Vector3(0.3, 1, -0.3),
+      new BABYLON.Vector3(0, 0, 0),
       this.scene
     );
     hemiLight.intensity = 1;
     // hemiLight.groundColor =new BABYLON.Color3(62/255,62/255,62/255);
 
-    let dirLight = new BABYLON.DirectionalLight(
-      "DirectionalLight",
-      new BABYLON.Vector3(0.2, -1, -0.3),
-      this.scene
-    );
-    dirLight.position = new BABYLON.Vector3(3, 9, 3);
+    // let dirLight = new BABYLON.DirectionalLight(
+    //   "DirectionalLight",
+    //   new BABYLON.Vector3(0.2, -1, -0.3),
+    //   this.scene
+    // );
+    // dirLight.position = new BABYLON.Vector3(3, 9, 3);
 
     this.alphaMaterial = new BABYLON.StandardMaterial("alphaMat", this.scene);
     this.alphaMaterial.alpha = 0;
@@ -316,6 +398,7 @@ export default class StudioSceneManager {
             mesh.parent = parentMesh;
           });
           exportMesh.dispose();
+
         }
       );
     } else {
@@ -340,27 +423,34 @@ export default class StudioSceneManager {
 
     let selectedEnvironment = HDRList.find((hdr) => hdr.id === environmentId);
     if (selectedEnvironment) {
-      console.log("selectedEnvironment", selectedEnvironment);
+      console.log("selectedEnvironment", selectedEnvironment);     
+      let hdrSkyBox = this.scene.getMeshByID("hdrSkyBox");
+
+      if(!selectedEnvironment.env){
+        hdrSkyBox.visibility = 0;
+        return;
+      }
       if (this.scene.environmentTexture)
         this.scene.environmentTexture.dispose();
 
-      this.scene.environmentTexture = new BABYLON.CubeTexture(
-        selectedEnvironment.env,
-        this.scene
-      );
-      this.scene.environmentIntensity = 1;
-
-      let hdrSkyBox = this.scene.getMeshByID("hdrSkyBox");
-      if (hdrSkyBox) {
-        console.log("Ssssssssss", hdrSkyBox);
-        if (hdrSkyBox.material) hdrSkyBox.material.dispose();
-        hdrSkyBox.dispose();
-      }
-      var hdrTexture = new BABYLON.CubeTexture(
-        selectedEnvironment.env,
-        this.scene
-      );
-      this.scene.createDefaultSkybox(hdrTexture, true, 1000, 0.5);
+        this.scene.environmentTexture = new BABYLON.CubeTexture(
+          selectedEnvironment.env,
+          this.scene
+        );
+        this.scene.environmentIntensity = 1;
+  
+        if (hdrSkyBox) {
+          console.log("Ssssssssss", hdrSkyBox);
+          if (hdrSkyBox.material) hdrSkyBox.material.dispose();
+          hdrSkyBox.dispose();
+        }
+        if(selectedEnvironment.env){
+          var hdrTexture = new BABYLON.CubeTexture(
+          selectedEnvironment.env,
+          this.scene
+          );
+          this.scene.createDefaultSkybox(hdrTexture, true, 1000, 0.5);
+        }
     }
   }
   customizeSceneEnvironment(environmentKey, value) {
@@ -376,11 +466,43 @@ export default class StudioSceneManager {
       if (checked) this.controlSkyBoxBlur(0.5);
     }
   }
-  controlSkyBoxBlur(value) {
+  controlSkyBoxBlur (value) {
     let skyboxMat = this.scene.getMaterialByID("skyBox");
     if (skyboxMat) {
       //doableKey
       skyboxMat.microSurface = 1 - value;
+
+    }
+  }
+  toggleGridGround (checked) {
+    console.log("checked", checked)
+    this.ground.setEnabled(checked);
+  }
+  resetCameraView () {
+    this.mainCamera.target = this.initCamValues.target.clone();
+    this.mainCamera.alpha = this.initCamValues.alpha;
+    this.mainCamera.beta = this.initCamValues.beta;
+    this.mainCamera.radius = this.initCamValues.radius;
+  }
+  setCameraViewBySide(sideKey){
+    switch (sideKey) {
+      default:
+      case 0: //top
+        this.mainCamera.alpha = 1.6;
+        this.mainCamera.beta = 0.0;
+        break;
+      case 1: //Left
+        this.mainCamera.alpha = 0.0;
+        this.mainCamera.beta = 1.45;
+        break;
+      case 2: //Right
+        this.mainCamera.alpha = 3.14;
+        this.mainCamera.beta = 1.45;
+        break;
+      case 3: //Center
+        this.mainCamera.alpha = 1.60;
+        this.mainCamera.beta = 1.50;
+        break;
     }
   }
   //#endregion

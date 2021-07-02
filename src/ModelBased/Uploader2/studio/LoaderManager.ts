@@ -1,7 +1,7 @@
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 import { MaterialsTypes } from "../../../AppUtils";
-import { createScene } from "./StudioSceneManager";
+import { createScene, createShadowGenrator } from "./StudioSceneManager";
 import {
   Scene,
   Engine,
@@ -20,6 +20,7 @@ export function LoadAsync(
 ): Promise<{ scene: Scene; meshData: MeshData }> {
   return new Promise((resolve, reject) => {
     let newScene = createScene(engine);
+    let shadowGenerator = createShadowGenrator(newScene);
     BABYLON.SceneLoader.ImportMesh(
       "",
       rootUrl,
@@ -73,6 +74,10 @@ export function LoadAsync(
         let meshData: MeshData = { nodes: [], materials: [] };
         //get materials
         for (let i = 0; i < meshes.length; i++) {
+          if(meshes[i].getTotalVertices() > 0){
+            shadowGenerator.getShadowMap()?.renderList?.push(meshes[i]);
+            shadowGenerator.addShadowCaster(meshes[i], true);
+          }
           if (meshes[i].material) {
             // mesh contains material
             let material = meshes[i].material as StandardMaterial | PBRMaterial;
