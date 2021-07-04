@@ -48,12 +48,16 @@ export function createShadowGenrator(scene){
   let shadowGenerator = new BABYLON.ShadowGenerator(512, dirLight);
   shadowGenerator.useBlurExponentialShadowMap = true;
   shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_HIGH;
+  shadowGenerator.blurScale = 2;
+  shadowGenerator.setDarkness(0.4);
+
   // this.shadowGenerator.forceBackFacesOnly = true;
   // this.shadowGenerator.blurKernel = 32;
   // this.shadowGenerator.depthScale = 150;
   dirLight.intensity = 1;
   dirLight.shadowMinZ = 0;
   dirLight.shadowMaxZ = 700;
+
 
   return shadowGenerator;
 }
@@ -272,10 +276,9 @@ export default class StudioSceneManager {
     backgroundMaterial.shadowLevel = .9;
     backgroundMaterial.alpha = 0.2;
 
-    var groundMaterial = new BABYLON.StandardMaterial("backgroundMaterial 1", this.scene);
-    groundMaterial.alpha = 0.2;
-    groundMaterial.diffuseColor = new BABYLON.Color3(65/255,65/255,65/255);
-    mirrorGround.material = groundMaterial;
+    //Shadow material
+    var shadowMat = new BABYLONMaterials.ShadowOnlyMaterial('shadow Mat', this.scene);
+    mirrorGround.material = shadowMat;
 
     //Mirror
     // this.mirror = new BABYLON.MirrorTexture("mirror", 512, this.scene);
