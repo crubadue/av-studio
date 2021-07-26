@@ -406,6 +406,8 @@ export default class StudioSceneManager {
     return channels;
   }
   getTextureBase(texture) {
+    if(!texture)
+      return null;
     //get hidden canvas element
     let c = document.getElementById("offscreenCanvas");
     let ctx = c.getContext("2d");
