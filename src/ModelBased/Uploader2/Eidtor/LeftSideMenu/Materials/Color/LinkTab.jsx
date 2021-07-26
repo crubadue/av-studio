@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Col, Row, Typography, Divider, Slider, Card } from "antd";
-import "../../../../../index.css";
-import "./mine.css";
+import "../../../../../../index.css";
+import "../mine.css";
 
 const { Title } = Typography;
 const { Meta } = Card;
+
 
 const LinkTab = (props) => {
   const data = [
@@ -20,10 +21,8 @@ const LinkTab = (props) => {
   return (
     <Row
       style={{
-        padding: "15px 15px",
         overflow: "hidden",
-        border: "1px solid #fff",
-        margin: "20px 10px",
+        margin: "2.5em 1em 0px .7em",
         // height: "calc(100% - 30px)",
         // width: "100%",
       }}
@@ -34,6 +33,7 @@ const LinkTab = (props) => {
       </Col>
       {/* backgroundImage:`url(${component.imagePath})`, */}
       <Row
+      
         style={{
           width: "100%",
           justifyContent: "flex-start",
@@ -54,5 +54,6 @@ const LinkTab = (props) => {
     </Row>
   );
 };
+
 
 export default LinkTab;

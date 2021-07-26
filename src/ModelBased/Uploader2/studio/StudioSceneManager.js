@@ -5,7 +5,7 @@ import { GLTF2Export } from "babylonjs-serializers";
 
 import LoaderManager from "./LoaderManager";
 import StudioSceneHelper from "./StudioSceneHelper";
-import { HDRList } from "../../../AppUtils";
+import { HDRList, MaterialChannels } from "../../../AppUtils";
 
 // import * as BABYLONMaterials from 'babylonjs-materials';
 import "babylonjs-inspector";
@@ -30,7 +30,7 @@ export function createScene(engine) {
   return scene;
 }
 
-export function createShadowGenrator(scene){
+export function createShadowGenrator(scene) {
   // let dirLight = new BABYLON.DirectionalLight(
   //   "DirectionalLight",
   //   new BABYLON.Vector3(.3, -1, 0.2),
@@ -39,10 +39,13 @@ export function createShadowGenrator(scene){
   // dirLight.position = new BABYLON.Vector3(3, 9, 3);
 
   // light1
-	var dirLight = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-1, -2, -1), scene);
-	dirLight.position = new BABYLON.Vector3(20, 40, 20);
-	dirLight.intensity = 0.5;
-
+  var dirLight = new BABYLON.DirectionalLight(
+    "dir01",
+    new BABYLON.Vector3(-1, -2, -1),
+    scene
+  );
+  dirLight.position = new BABYLON.Vector3(20, 40, 20);
+  dirLight.intensity = 0.5;
 
   // ShadowGenerator
   let shadowGenerator = new BABYLON.ShadowGenerator(512, dirLight);
@@ -57,7 +60,6 @@ export function createShadowGenrator(scene){
   dirLight.intensity = 1;
   dirLight.shadowMinZ = 0;
   dirLight.shadowMaxZ = 700;
-
 
   return shadowGenerator;
 }
@@ -87,7 +89,7 @@ export default class StudioSceneManager {
       beta: 0,
       raduis: 0,
       target: new BABYLON.Vector3.Zero(),
-    }
+    };
 
     this.adjustTheScene();
   }
@@ -100,6 +102,17 @@ export default class StudioSceneManager {
     this.scene.imageProcessingConfiguration.contrast = 2.0;
     this.scene.imageProcessingConfiguration.exposure = 0.6;
     // this.scene.imageProcessingConfiguration.toneMappingEnabled = true;
+
+    // BABYLON.SceneLoader.ImportMesh(
+    //   "",
+    //   "https://kokmito2.000webhostapp.com/",
+    //   "Chica_afro.glb",
+    //   this.scene,
+    //   (meshes) => {
+    //     console.log("n dd n", this.scene.getMaterialByName("Afro"));
+    //     this.getTextureBase(this.scene.getMaterialByName("Afro").albedoTexture);
+    //   }
+    // );
 
     // this.scene = new BABYLON.Scene(this.game.engine);
     // this.scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
@@ -160,14 +173,26 @@ export default class StudioSceneManager {
     this.mainCamera = this.scene.activeCamera;
     this.mainCamera.name = "ArcCamera";
 
-    this.initCamValues ={
-      alpha : this.mainCamera.alpha,
-      beta : this.mainCamera.beta,
+    var distance = this.mainCamera.radius * 2;
+    var aspect =
+      this.scene.getEngine().getRenderingCanvasClientRect().height /
+      this.scene.getEngine().getRenderingCanvasClientRect().width;
+    this.mainCamera.orthoLeft = -distance / 2;
+    this.mainCamera.orthoRight = distance / 2;
+    this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * aspect * 1.5;
+    this.mainCamera.orthoTop = this.mainCamera.orthoRight * aspect * 1.5;
+    // this.mainCamera.orthoTop += 1;
+
+    let ss = 23;
+
+    this.initCamValues = {
+      alpha: this.mainCamera.alpha,
+      beta: this.mainCamera.beta,
       radius: this.mainCamera.radius,
       target: this.mainCamera.target.clone(),
-    }
+    };
 
-    console.log("this.initCamValues 1", this.initCamValues)
+    console.log("this.initCamValues 1", this.initCamValues);
 
     // this.mainCamera.useAutoRotationBehavior = true;
     this.mainCamera.useFramingBehavior = true;
@@ -190,8 +215,9 @@ export default class StudioSceneManager {
 
     this.mainCamera.upperBetaLimit = 1.5;
 
-    this.mainCamera.minZ = 0.2;
-    this.mainCamera.target = new BABYLON.Vector3(0, 0.5, 0);
+    this.mainCamera.minZ = 0.001;
+    this.mainCamera.maxZ = 3000;
+    // this.mainCamera.target = new BABYLON.Vector3(0, 0.5, 0);
     this.mainCamera.wheelPrecision = 10;
     this.mainCamera.wheelDeltaPercentage = 0.015;
 
@@ -254,7 +280,6 @@ export default class StudioSceneManager {
 
     this.ground.material = this.gridMaterial;
 
-
     //Create MirrorGround
     let mirrorGround = BABYLON.Mesh.CreateGround(
       "MirrorGround",
@@ -263,21 +288,25 @@ export default class StudioSceneManager {
       10,
       this.scene
     );
-    mirrorGround.position.y = -0.15;
+
+    // mirrorGround.position.y = -0.15;
     mirrorGround.isPickable = false;
     mirrorGround.receiveShadows = true;
 
     //background material.
-     var backgroundMaterial = new BABYLON.BackgroundMaterial(
+    var backgroundMaterial = new BABYLON.BackgroundMaterial(
       "backgroundMaterial",
       this.scene
     );
     backgroundMaterial.opacityFresnel = false;
-    backgroundMaterial.shadowLevel = .9;
+    backgroundMaterial.shadowLevel = 0.9;
     backgroundMaterial.alpha = 0.2;
 
     //Shadow material
-    var shadowMat = new BABYLONMaterials.ShadowOnlyMaterial('shadow Mat', this.scene);
+    var shadowMat = new BABYLONMaterials.ShadowOnlyMaterial(
+      "shadow Mat",
+      this.scene
+    );
     mirrorGround.material = shadowMat;
 
     //Mirror
@@ -288,10 +317,14 @@ export default class StudioSceneManager {
     // backgroundMaterial.reflectionFresnel = true;
     // backgroundMaterial.reflectionStandardFresnelWeight = 0.9;
     // backgroundMaterial.reflectionTexture.level = 0.8;
-    // mirrorGround.material = backgroundMaterial;
+    // m+irrorGround.material = backgroundMaterial;
 
     console.log("Sdsd", this.studioSceneHelper);
-    this.studioSceneHelper.createCoordinateAxes(this.ground, groundSize / 2, this.scene);
+    this.studioSceneHelper.createCoordinateAxes(
+      this.ground,
+      groundSize / 2,
+      this.scene
+    );
   }
   prepareLighting() {
     let hemiLight = new BABYLON.HemisphericLight(
@@ -339,20 +372,81 @@ export default class StudioSceneManager {
   //#endregion
 
   //#region Getters
-  getMaterialOptions(materialId) {
+  async getMaterialOptions(materialId) {
     let selectedMaterial = this.scene.getMaterialByUniqueID(materialId);
-    if (selectedMaterial.getClassName() === "PBRMaterial")
-      return {
-        metallic: selectedMaterial.metallic,
-        roughness: selectedMaterial.roughness,
-        mainColor: selectedMaterial.albedoColor.toHexString(),
-      };
-    else
-      return {
-        mainColor: selectedMaterial.diffuseColor.toHexString(),
-      };
+    if (!selectedMaterial) return;
+
+    let colors = this.getMaterialColors(selectedMaterial);
+    let channels = await this.getMaterialChannels(selectedMaterial);
+
+    return {
+      colors,
+      channels,
+    };
   }
+
   //#endregion
+  //#region material option
+
+  //#endregion
+  async getMaterialChannels(material) {
+    //Channel obj
+    let channels = {};
+
+    //albedoTexture
+    channels.albdeoTexture = {
+      id: MaterialChannels.albdeoTexture,
+      img: await this.getTextureBase(material.albedoTexture),
+    };
+    channels.metallicTexture = {
+      id: MaterialChannels.albdeoTexture,
+      img: await this.getTextureBase(material.metallicTexture),
+    };
+
+    return channels;
+  }
+  getTextureBase(texture) {
+    //get hidden canvas element
+    let c = document.getElementById("offscreenCanvas");
+    let ctx = c.getContext("2d");
+
+    //try to readPixels and create imageDataURL (this creates temporary urls for GLB files (which contain textures references internally in the file))
+    const textureData = texture.readPixels(0, 0);
+    return textureData.then((imagePixels) => {
+      //get textureSize (0,0 if external resource is input)
+      const textureSize = texture.getSize();
+      //set canvas to that size
+      c.width = textureSize.width;
+      c.height = textureSize.height;
+
+      //create image data and define size of the image
+      const imageData = ctx.createImageData(
+        textureSize.width,
+        textureSize.height
+      );
+      //set texture data (RGBA values read from the texture) into imageData
+      imageData.data.set(imagePixels);
+      //put (draw) image on canvas
+      ctx.putImageData(imageData, 0, 0);
+      //create imageURL
+      let imageDataURL = c.toDataURL("image/png", 0.8);
+      return imageDataURL;
+    });
+  }
+  getMaterialColors(material) {
+    if (material.getClassName() === "PBRMaterial") {
+      return {
+        metallic: material.metallic,
+        roughness: material.roughness,
+        mainColor: material.albedoColor.toHexString(),
+      };
+    } else {
+      return {
+        mainColor: material.diffuseColor.toHexString(),
+      };
+    }
+  }
+
   //#region Handlers
   handleLoadMeshByURL(modelFile, onLoadMesh) {
     this.loaderManager.loadMeshByURL(modelFile, onLoadMesh);
@@ -366,8 +460,7 @@ export default class StudioSceneManager {
     }
     selectedMaterial[id] = newTargetValue;
   }
-
-  downloadGltfModel(isGltf=true) {
+  downloadGltfModel(isGltf = true) {
     console.log("downloadGltfModel");
     let selectedIds = [
       "MainGround",
@@ -401,7 +494,6 @@ export default class StudioSceneManager {
             mesh.parent = parentMesh;
           });
           exportMesh.dispose();
-
         }
       );
     } else {
@@ -426,34 +518,34 @@ export default class StudioSceneManager {
 
     let selectedEnvironment = HDRList.find((hdr) => hdr.id === environmentId);
     if (selectedEnvironment) {
-      console.log("selectedEnvironment", selectedEnvironment);     
+      console.log("selectedEnvironment", selectedEnvironment);
       let hdrSkyBox = this.scene.getMeshByID("hdrSkyBox");
 
-      if(!selectedEnvironment.env){
+      if (!selectedEnvironment.env) {
         hdrSkyBox.visibility = 0;
         return;
       }
       if (this.scene.environmentTexture)
         this.scene.environmentTexture.dispose();
 
-        this.scene.environmentTexture = new BABYLON.CubeTexture(
+      this.scene.environmentTexture = new BABYLON.CubeTexture(
+        selectedEnvironment.env,
+        this.scene
+      );
+      this.scene.environmentIntensity = 1;
+
+      if (hdrSkyBox) {
+        console.log("Ssssssssss", hdrSkyBox);
+        if (hdrSkyBox.material) hdrSkyBox.material.dispose();
+        hdrSkyBox.dispose();
+      }
+      if (selectedEnvironment.env) {
+        var hdrTexture = new BABYLON.CubeTexture(
           selectedEnvironment.env,
           this.scene
         );
-        this.scene.environmentIntensity = 1;
-  
-        if (hdrSkyBox) {
-          console.log("Ssssssssss", hdrSkyBox);
-          if (hdrSkyBox.material) hdrSkyBox.material.dispose();
-          hdrSkyBox.dispose();
-        }
-        if(selectedEnvironment.env){
-          var hdrTexture = new BABYLON.CubeTexture(
-          selectedEnvironment.env,
-          this.scene
-          );
-          this.scene.createDefaultSkybox(hdrTexture, true, 1000, 0.5);
-        }
+        this.scene.createDefaultSkybox(hdrTexture, true, 1000, 0.5);
+      }
     }
   }
   customizeSceneEnvironment(environmentKey, value) {
@@ -469,42 +561,50 @@ export default class StudioSceneManager {
       if (checked) this.controlSkyBoxBlur(0.5);
     }
   }
-  controlSkyBoxBlur (value) {
+  xcontrolSkyBoxBlur(value) {
     let skyboxMat = this.scene.getMaterialByID("skyBox");
     if (skyboxMat) {
       //doableKey
       skyboxMat.microSurface = 1 - value;
-
     }
   }
-  toggleGridGround (checked) {
-    console.log("checked", checked)
+  toggleGridGround(checked) {
+    console.log("checked", checked);
     this.ground.setEnabled(checked);
   }
-  resetCameraView () {
+  resetCameraView() {
     this.mainCamera.target = this.initCamValues.target.clone();
     this.mainCamera.alpha = this.initCamValues.alpha;
     this.mainCamera.beta = this.initCamValues.beta;
     this.mainCamera.radius = this.initCamValues.radius;
   }
-  setCameraViewBySide(sideKey){
+  setCameraViewBySide(sideKey) {
     switch (sideKey) {
       default:
       case 0: //top
         this.mainCamera.alpha = 1.6;
         this.mainCamera.beta = 0.0;
+        //
+        this.mainCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+        this.toggleGridGround(false);
         break;
       case 1: //Left
         this.mainCamera.alpha = 0.0;
-        this.mainCamera.beta = 1.45;
+        this.mainCamera.beta = 1.5;
+        this.mainCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+        this.toggleGridGround(false);
         break;
       case 2: //Right
         this.mainCamera.alpha = 3.14;
-        this.mainCamera.beta = 1.45;
+        this.mainCamera.beta = 1.5;
+        this.mainCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+        this.toggleGridGround(false);
         break;
       case 3: //Center
-        this.mainCamera.alpha = 1.60;
-        this.mainCamera.beta = 1.50;
+        this.mainCamera.alpha = 1.6;
+        this.mainCamera.beta = 1.5;
+        this.mainCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
+        this.toggleGridGround(true);
         break;
     }
   }

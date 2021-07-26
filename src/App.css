@@ -41,11 +41,27 @@
   background: #3a3f4b !important;
   color: #cacad4 !important;
 }
-.ant-btn:hover,
-.ant-btn:focus {
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  /* color: #000006 !important; */
+  /* background-color: #3e90ff !important; */
+  /* border-color: #3e90ff !important ; */
+}
+.ant-btn-text:hover,
+.ant-btn-text:focus {
   color: #000006 !important;
   background-color: #3e90ff !important;
   border-color: #3e90ff !important ;
+}
+
+.ant-btn-dangerous {
+  color: #fff !important;
+  background: #ff4d4f !important;
+  border-color: #ff4d4f;
+}
+.ant-btn-dangerous:hover,
+.ant-btn-dangerous:focus {
+  /* color: #000006 !important; */
 }
 /* /// */
 
@@ -168,6 +184,20 @@ span.ant-radio + * {
 
 .ant-select-arrow {
   color: rgb(255 255 255) !important;
+}
+
+.ant-collapse {
+  background-color: #3a3f4b !important;
+}
+.ant-collapse-content {
+  background-color: #3a3f4b !important;
+}
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  color: rgb(202, 202, 212) !important;
+  font-weight: 800 !important;
+}
+.ant-collapse-content > .ant-collapse-content-box {
+  padding: 1.5em 1% !important;
 }
 
 /* .ant-select-item-option-content {

@@ -1,0 +1,27 @@
+.channelImg {
+  background-repeat: round;
+  background-size: cover;
+  background-color: teal;
+  height: 2.2em;
+  width: 2.3em;
+  /* cursor: pointer; */
+  outline: none;
+  border: 1px solid #c7c7c7;
+  border-radius: 5px;
+  margin: 0px 1em;
+}
+
+.channelText {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  font-size: 1.3em;
+  color: #cacad4;
+}
+
+.divHolder {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

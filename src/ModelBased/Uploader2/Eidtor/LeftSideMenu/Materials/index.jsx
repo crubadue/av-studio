@@ -1,34 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Tabs, Divider, Select, Row, Col } from "antd";
+import { Divider, Collapse, Spin } from "antd";
 
 import ListTab from "./ListTab";
-import EditTab from "./EditTab";
-import LinkTab from "./LinkTab";
+import ColorTab from "./Color";
+import Channels from "./Channels";
 
-const { TabPane } = Tabs;
-const { Option } = Select;
-
-export const MaterialTabs = {
-  EditTab: "Edit",
-  LinkTab: "Link",
-};
+const { Panel } = Collapse;
 
 const MaterialTab = (props) => {
   const { materialList } = props;
-  const [selectedTab, setSeletedTab] = useState(MaterialTabs.EditTab);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-    setSeletedTab(value);
-  };
-
-  const callback = (key) => {
-    console.log(key);
-  };
-
-  
-  console.log("selectedMaterial", selectedMaterial);
+  // console.log("selectedMaterial ===> ", selectedMaterial);
   return (
     <>
       <div style={{ height: "40%" }}>
@@ -36,56 +20,31 @@ const MaterialTab = (props) => {
           materialList={materialList}
           selectedMaterial={selectedMaterial}
           setSelectedMaterial={setSelectedMaterial}
+          setIsLoading={setIsLoading}
         />
       </div>
-      {selectedMaterial && (
-        <div style={{ height: "60%" }}>
+      {selectedMaterial && ( //Bottom Part
+        <div key={selectedMaterial.id} style={{ height: "60%" }}>
           <Divider orientation="left" style={{ color: "#3e90ff" }}>
             {selectedMaterial.name}
           </Divider>
           <div
             style={{
-              padding: "5px",
+              padding: "5px 2%",
               overflow: "auto",
               height: "calc(100% - 60px)",
             }}
           >
-            <Row
-              style={{
-                justifyContent: "flex-start",
-                overflow: "hidden",
-                width: "100%",
-                // maxHeight: "100%",
-              }}
-            >
-              <Row style={{ width: "100%" }}>
-                <Col offset={2} span={20}>
-                  <Select
-                    defaultValue="Edit"
-                    style={{ width: "100%" }}
-                    onChange={handleChange}
-                  >
-                    {Object.values(MaterialTabs).map((tab) => (
-                      <Option key={tab} value={tab}>
-                        {tab}
-                      </Option>
-                    ))}
-                  </Select>
-                </Col>
-              </Row>
-              <div
-                style={{
-                  overflow: "hidden",
-                  maxHeight: "calc(100% - 23px)",
-                }}
-              >
-                {selectedTab === MaterialTabs.EditTab ? (
-                  <EditTab key={selectedMaterial.id} selectedMaterial={selectedMaterial} />
-                ) : (
-                  <LinkTab />
-                )}
-              </div>
-            </Row>
+            <Spin spinning={isLoading}>
+              <Collapse defaultActiveKey={["1"]}>
+                <Panel header="Colors" key="1">
+                  <ColorTab selectedMaterial={selectedMaterial} />
+                </Panel>
+                <Panel header="Channels" key="2">
+                  <Channels selectedMaterial={selectedMaterial} />
+                </Panel>
+              </Collapse>
+            </Spin>
           </div>
         </div>
       )}

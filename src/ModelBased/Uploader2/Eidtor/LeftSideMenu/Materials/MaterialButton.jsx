@@ -5,7 +5,8 @@ import "../../../../../index.css";
 import { GmContext } from "../../../components/renderingZone";
 
 const ListTab = (props) => {
-  const { material, selectedMaterial, setSelectedMaterial } = props;
+  const { material, selectedMaterial, setSelectedMaterial, setIsLoading } =
+    props;
   const gameManager = useContext(GmContext);
 
   const isSelected = useMemo(() => {
@@ -21,10 +22,16 @@ const ListTab = (props) => {
         height: "48px",
       }}
       onClick={() => {
-        let materialOptions = gameManager.studioSceneManager.getMaterialOptions(
-          material.id
-        );
-        setSelectedMaterial({ ...material, options: { ...materialOptions } });
+        setIsLoading(true);
+        gameManager.studioSceneManager
+          .getMaterialOptions(material.id)
+          .then((materialOptions) => {
+            setSelectedMaterial({
+              ...material,
+              options: { ...materialOptions },
+            });
+            setIsLoading(false);
+          });
       }}
     >
       {material.name}

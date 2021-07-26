@@ -16,6 +16,7 @@ const LeftSideMenu = (props) => {
   const { loadedMeshData } = props;
   const [selectedTab, setSeletedTab] = useState(LeftMenuTabs.Materials);
 
+  
   const renderTabs = useCallback(() => {
     switch (selectedTab) {
       default:
@@ -31,6 +32,7 @@ const LeftSideMenu = (props) => {
     
   }
 
+  
   return (
     <>
       <Tabs onChange={onChange} type="card" style={{ height: "100%" }}>
@@ -43,8 +45,8 @@ const LeftSideMenu = (props) => {
         <TabPane tab="Properties" key="3" style={{ height: "100%" }}>
           <PropertiesTab materialList={loadedMeshData.materials} />
         </TabPane>
-        <TabPane tab="View" key="4" style={{ height: "100%" }}>
-        </TabPane>
+        {/* <TabPane tab="View" key="4" style={{ height: "100%" }}>
+        </TabPane> */}
       </Tabs>
     </>
   );

@@ -58,6 +58,7 @@ export function LoadAsync(
         meshHolder.position = boxHolderPosition.clone();
         meshHolder.visibility = 0;
 
+
         let rootMesh = meshes.find((mesh) => mesh.id === "__root__");
         if (rootMesh) {
           rootMesh.parent = meshHolder;
@@ -79,7 +80,7 @@ export function LoadAsync(
             shadowGenerator.addShadowCaster(meshes[i], true);
           }
           if (meshes[i].material) {
-            // mesh contains material
+            // mesh contains material0
             let material = meshes[i].material as StandardMaterial | PBRMaterial;
             if (
               meshData.materials.every(

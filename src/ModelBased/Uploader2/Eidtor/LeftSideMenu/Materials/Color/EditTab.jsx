@@ -6,20 +6,22 @@ import {
   MaterialAttributeTypes,
   PBRMaterialAttributes,
   StandardMaterialAttributes,
-} from "../../../../../AppUtils";
-import { GmContext } from "../../../components/renderingZone";
+} from "../../../../../../AppUtils";
+import { GmContext } from "../../../../components/renderingZone";
 
 const { Title } = Typography;
 
 const EditTab = (props) => {
   const { selectedMaterial } = props;
-  const [background, setBackground] = useState(selectedMaterial.options.mainColor);
+  const [background, setBackground] = useState(
+    selectedMaterial.options.colors.mainColor
+  );
   const gameManager = useContext(GmContext);
 
   // console.log("sds", selectedMaterial);
 
   const isStandardMaterial = useMemo(() => {
-    return selectedMaterial === MaterialsTypes.StandardMaterial ? true : false;
+    return selectedMaterial.type === MaterialsTypes.StandardMaterial ? true : false;
   }, [selectedMaterial]);
 
   const handleOnOptionChange = useCallback(
@@ -59,11 +61,8 @@ const EditTab = (props) => {
   return (
     <Row
       style={{
-        padding: "15px 15px",
         overflow: "hidden",
-        border: "1px solid #fff",
-        margin:"20px 10px",
-        marginTop:"20px"
+        margin: "2.5em 1em 0px .7em",
         // maxHeight: "calc(100% - 52px)",
         // height: "calc(100% - 30px)",
       }}
@@ -87,7 +86,7 @@ const EditTab = (props) => {
             </Col>
             <Col offset={2} span={20}>
               <Slider
-                defaultValue={selectedMaterial.options.metallic}
+                defaultValue={selectedMaterial.options.colors.metallic}
                 min={0}
                 max={1}
                 step={0.01}
@@ -102,7 +101,7 @@ const EditTab = (props) => {
             </Col>
             <Col offset={2} span={20}>
               <Slider
-                defaultValue={selectedMaterial.options.roughness}
+                defaultValue={selectedMaterial.options.colors.roughness}
                 min={0}
                 max={1}
                 step={0.01}

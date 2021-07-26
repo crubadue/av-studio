@@ -5,7 +5,9 @@ import MaterialButton from "./MaterialButton";
 const { TabPane } = Tabs;
 
 const ListTab = (props) => {
-  const { materialList, selectedMaterial, setSelectedMaterial } = props;
+  const { materialList, selectedMaterial, setSelectedMaterial, setIsLoading } =
+    props;
+  // console.log("material lit ", materialList);
   function callback(key) {
     console.log(key);
   }
@@ -26,6 +28,7 @@ const ListTab = (props) => {
               material={material}
               selectedMaterial={selectedMaterial}
               setSelectedMaterial={setSelectedMaterial}
+              setIsLoading={setIsLoading}
             ></MaterialButton>
           </Col>
         );
