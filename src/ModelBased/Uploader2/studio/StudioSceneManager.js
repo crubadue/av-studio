@@ -168,7 +168,7 @@ export default class StudioSceneManager {
     // this.loaderManager.loadMainMesh(); //start load mainBike
     console.log("All OK !!");
     // this.sc
-    // this.scene.debugLayer.show();
+    this.scene.debugLayer.show();
   }
   createCamera() {
     if (this.scene.activeCamera) {
@@ -196,7 +196,7 @@ export default class StudioSceneManager {
       target: this.mainCamera.target.clone(),
     };
 
-    console.log("this.initCamValues 1", this.initCamValues);
+    // console.log("this.initCamValues 1", this.initCamValues);
 
     // this.mainCamera.useAutoRotationBehavior = true;
     this.mainCamera.useFramingBehavior = true;
@@ -218,7 +218,7 @@ export default class StudioSceneManager {
 
     this.mainCamera.upperBetaLimit = 1.57;
 
-    this.mainCamera.minZ = 0.001;
+    this.mainCamera.minZ = 0.1;
     // this.mainCamera.maxZ = Number.MAX_VALUE;
     // this.mainCamera.target = new BABYLON.Vector3(0, 0.5, 0);
 
@@ -255,7 +255,6 @@ export default class StudioSceneManager {
       groundSize = groundSize < 2.5 ? 2.5 : groundSize;
       groundSize *= 7;
     }
-    console.log("groundSize", groundSize);
 
     //Ground
     this.ground = BABYLON.Mesh.CreateGround(
@@ -323,7 +322,6 @@ export default class StudioSceneManager {
     // backgroundMaterial.reflectionTexture.level = 0.8;
     // m+irrorGround.material = backgroundMaterial;
 
-    console.log("Sdsd", this.studioSceneHelper);
     this.studioSceneHelper.createCoordinateAxes(
       this.ground,
       groundSize / 2,
@@ -371,9 +369,6 @@ export default class StudioSceneManager {
     this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
     this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
 
-    console.log("ratio", this.ratio);
-    console.log("distance", distance / 2);
-
     this.totalZoom = 0;
     this.zoomTarget = null;
 
@@ -384,9 +379,12 @@ export default class StudioSceneManager {
           -1,
           Math.min(1, event.wheelDelta || -event.detail || event.deltaY)
         ) * 0.2;
-      if ((delta > 0 && this.totalZoom < 14) || delta < 0) {
+      if (
+        (delta > 0 && this.totalZoom < this.worldExtends.max.x / 2) ||
+        delta < 0
+      ) {
         this.totalZoom += delta;
-        this.zoom2DView(this.mainCamera, delta);
+        this.zoom2DView(this.mainCamera, delta * (this.worldExtends.max.x / 5));
       }
     }, BABYLON.PointerEventTypes.POINTERWHEEL);
 
@@ -469,7 +467,7 @@ export default class StudioSceneManager {
       });
     }, 200);
 
-    console.log("dddddddddddddddddddddddddddddddddddddddddddd");
+    // console.log("dddddddddddddddddddddddddddddddddddddddddddd");
     return {
       attributes,
     };
@@ -494,8 +492,6 @@ export default class StudioSceneManager {
         img: await this.getTextureBase(material[key]),
       };
     }
-    console.log("channels", channels);
-
     return channels;
   }
   getTextureBase(texture) {
@@ -557,7 +553,6 @@ export default class StudioSceneManager {
         value: this.getAttributeValueByType(attribute, material),
       };
     });
-    console.log("======= >>> ", colors);
     return colors;
     // if (material.getClassName() === "PBRMaterial") {
     //   return {
@@ -603,7 +598,6 @@ export default class StudioSceneManager {
       mesh.parent = exportMesh;
     });
 
-    console.log("selectedIds", selectedIds);
     let options = {
       shouldExportNode: (mesh) => {
         return !selectedIds.includes(mesh.name);
@@ -643,7 +637,6 @@ export default class StudioSceneManager {
     let oth;
     let selectedEnvironment = HDRList.find((hdr) => hdr.id === environmentId);
     if (selectedEnvironment) {
-      console.log("selectedEnvironment", selectedEnvironment);
       let hdrSkyBox = this.scene.getMeshByID("hdrSkyBox");
 
       if (!selectedEnvironment.env) {
@@ -660,7 +653,6 @@ export default class StudioSceneManager {
       this.scene.environmentIntensity = 1;
 
       if (hdrSkyBox) {
-        console.log("Ssssssssss", hdrSkyBox);
         if (hdrSkyBox.material) hdrSkyBox.material.dispose();
         hdrSkyBox.dispose();
       }
@@ -713,6 +705,7 @@ export default class StudioSceneManager {
     this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
     this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
 
+    this.mainCamera.minZ = this.mainCamera.maxZ * -1;
     switch (sideKey) {
       default:
       case 0: //top
