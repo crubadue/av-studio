@@ -1,11 +1,17 @@
 import * as BABYLON from "babylonjs";
 import * as BABYLONMaterials from "babylonjs-materials";
-import { MaterialsTypes, MaterialAttributeTypes } from "../../../AppUtils";
 import { GLTF2Export } from "babylonjs-serializers";
 
 import LoaderManager from "./LoaderManager";
 import StudioSceneHelper from "./StudioSceneHelper";
-import { HDRList, MaterialChannels } from "../../../AppUtils";
+import {
+  HDRList,
+  PBRChannels,
+  StandardChannels,
+  MaterialAttributeTypes,
+  PBRMaterialAttributes,
+  StandardMaterialAttributes,
+} from "../../../AppUtils";
 
 // import * as BABYLONMaterials from 'babylonjs-materials';
 import "babylonjs-inspector";
@@ -87,7 +93,7 @@ export default class StudioSceneManager {
     this.initCamValues = {
       alpha: 0,
       beta: 0,
-      raduis: 0,
+      radius: 0,
       target: new BABYLON.Vector3.Zero(),
     };
 
@@ -173,17 +179,15 @@ export default class StudioSceneManager {
     this.mainCamera = this.scene.activeCamera;
     this.mainCamera.name = "ArcCamera";
 
-    var distance = this.mainCamera.radius * 2;
-    var aspect =
-      this.scene.getEngine().getRenderingCanvasClientRect().height /
-      this.scene.getEngine().getRenderingCanvasClientRect().width;
-    this.mainCamera.orthoLeft = -distance / 2;
-    this.mainCamera.orthoRight = distance / 2;
-    this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * aspect * 1.5;
-    this.mainCamera.orthoTop = this.mainCamera.orthoRight * aspect * 1.5;
-    // this.mainCamera.orthoTop += 1;
+    // var aspect =
+    //   this.scene.getEngine().getRenderingCanvasClientRect().height /
+    //   this.scene.getEngine().getRenderingCanvasClientRect().width;
+    // this.mainCamera.orthoLeft = -distance / 2;
+    // this.mainCamera.orthoRight = distance / 2;
+    // this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * aspect * 1.5;
+    // this.mainCamera.orthoTop = this.mainCamera.orthoRight * aspect * 1.5;
 
-    let ss = 23;
+    this.initOrthographcCamera();
 
     this.initCamValues = {
       alpha: this.mainCamera.alpha,
@@ -204,7 +208,6 @@ export default class StudioSceneManager {
     framingBehavior.elevationReturnTime = -1;
 
     //WordExtends
-    this.mainCamera.lowerRadiusLimit = null;
     var worldExtends = this.scene.getWorldExtends((mesh) => {
       return mesh.isVisible && mesh.isEnabled() && mesh.name !== "MainGround";
     });
@@ -213,11 +216,12 @@ export default class StudioSceneManager {
     this.worldExtends = worldExtends;
     framingBehavior.zoomOnBoundingInfo(worldExtends.min, worldExtends.max);
 
-    this.mainCamera.upperBetaLimit = 1.5;
+    this.mainCamera.upperBetaLimit = 1.57;
 
     this.mainCamera.minZ = 0.001;
-    this.mainCamera.maxZ = 3000;
+    // this.mainCamera.maxZ = Number.MAX_VALUE;
     // this.mainCamera.target = new BABYLON.Vector3(0, 0.5, 0);
+
     this.mainCamera.wheelPrecision = 10;
     this.mainCamera.wheelDeltaPercentage = 0.015;
 
@@ -225,7 +229,7 @@ export default class StudioSceneManager {
     this.mainCamera.upperRadiusLimit = 8 * this.mainCamera.radius;
     // this.mainCamera.lowerRadiusLimit = 55;
 
-    this.mainCamera.lowerRadiusLimit = 0;
+    this.mainCamera.lowerRadiusLimit = 0.05;
     this.mainCamera.upperRadiusLimit = 500;
 
     // this.mainCamera.wheelDeltaPercentage = 0.15;
@@ -358,6 +362,84 @@ export default class StudioSceneManager {
     //Apply Default Scene Environment
     this.applySceneEnvironment(HDRList[0].id);
   }
+  initOrthographcCamera() {
+    // this.resetCameraView();;
+    var distance = this.mainCamera.radius * 2;
+    this.ratio = this.canvas.height / this.canvas.width;
+    this.mainCamera.orthoLeft = -distance;
+    this.mainCamera.orthoRight = distance;
+    this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
+    this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
+
+    console.log("ratio", this.ratio);
+    console.log("distance", distance / 2);
+
+    this.totalZoom = 0;
+    this.zoomTarget = null;
+
+    this.scene.onPointerObservable.add(({ event }) => {
+      if (this.mainCamera.mode !== BABYLON.Camera.ORTHOGRAPHIC_CAMERA) return;
+      const delta =
+        Math.max(
+          -1,
+          Math.min(1, event.wheelDelta || -event.detail || event.deltaY)
+        ) * 0.2;
+      if ((delta > 0 && this.totalZoom < 14) || delta < 0) {
+        this.totalZoom += delta;
+        this.zoom2DView(this.mainCamera, delta);
+      }
+    }, BABYLON.PointerEventTypes.POINTERWHEEL);
+
+    this.scene.onPointerObservable.add(() => {
+      if (this.mainCamera.mode !== BABYLON.Camera.ORTHOGRAPHIC_CAMERA) return;
+      // this.zoomTarget = this.initCamValues.target;
+      this.zoomTarget = BABYLON.Vector3.Unproject(
+        new BABYLON.Vector3(this.scene.pointerX, this.scene.pointerY, 0),
+        this.engine.getRenderWidth(),
+        this.engine.getRenderHeight(),
+        this.mainCamera.getWorldMatrix(),
+        this.mainCamera.getViewMatrix(),
+        this.mainCamera.getProjectionMatrix()
+      );
+    }, BABYLON.PointerEventTypes.POINTERMOVE);
+  }
+  async zoom2DView(camera, delta) {
+    const zoomingOut = delta < 0;
+
+    if (this.zoomTarget) {
+      const totalX = Math.abs(camera.orthoLeft - camera.orthoRight);
+      const totalY = Math.abs(camera.orthoTop - camera.orthoBottom);
+
+      const aspectRatio = totalY / totalX;
+
+      {
+        const fromCoord = camera.orthoLeft - this.zoomTarget.x;
+        const ratio = fromCoord / totalX;
+        camera.orthoLeft -= ratio * delta;
+      }
+
+      {
+        const fromCoord = camera.orthoRight - this.zoomTarget.x;
+        const ratio = fromCoord / totalX;
+        camera.orthoRight -= ratio * delta;
+      }
+
+      {
+        const fromCoord = camera.orthoTop - this.zoomTarget.y;
+        const ratio = fromCoord / totalY;
+        camera.orthoTop -= ratio * delta * aspectRatio;
+      }
+
+      {
+        const fromCoord = camera.orthoBottom - this.zoomTarget.y;
+        const ratio = fromCoord / totalY;
+        camera.orthoBottom -= ratio * delta * aspectRatio;
+      }
+
+      // decrease pan sensitivity the closer the zoom level.
+      camera.panningSensibility = 6250 / Math.abs(totalX / 2);
+    }
+  }
   //#endregion
 
   //#region UserInp1ut (Mouse)
@@ -372,42 +454,52 @@ export default class StudioSceneManager {
   //#endregion
 
   //#region Getters
-  async getMaterialOptions(materialId) {
+  getMaterialOptions(materialId, onLoadTextuers) {
     let selectedMaterial = this.scene.getMaterialByUniqueID(materialId);
     if (!selectedMaterial) return;
 
-    let colors = this.getMaterialColors(selectedMaterial);
-    let channels = await this.getMaterialChannels(selectedMaterial);
+    let attributes = this.getMaterialColors(selectedMaterial);
 
+    setTimeout(() => {
+      this.getMaterialChannels(selectedMaterial).then((channels) => {
+        onLoadTextuers({
+          attributes,
+          channels,
+        });
+      });
+    }, 200);
+
+    console.log("dddddddddddddddddddddddddddddddddddddddddddd");
     return {
-      colors,
-      channels,
+      attributes,
     };
   }
 
   //#endregion
   //#region material option
-
   //#endregion
+
   async getMaterialChannels(material) {
     //Channel obj
     let channels = {};
+    let targetChannels =
+      material.getClassName() === "PBRMaterial"
+        ? PBRChannels
+        : StandardChannels;
 
-    //albedoTexture
-    channels.albdeoTexture = {
-      id: MaterialChannels.albdeoTexture,
-      img: await this.getTextureBase(material.albedoTexture),
-    };
-    channels.metallicTexture = {
-      id: MaterialChannels.albdeoTexture,
-      img: await this.getTextureBase(material.metallicTexture),
-    };
+    for (const [key, value] of Object.entries(targetChannels)) {
+      channels[key] = {
+        id: key,
+        name: value,
+        img: await this.getTextureBase(material[key]),
+      };
+    }
+    console.log("channels", channels);
 
     return channels;
   }
   getTextureBase(texture) {
-    if(!texture)
-      return null;
+    if (!texture) return null;
     //get hidden canvas element
     let c = document.getElementById("offscreenCanvas");
     let ctx = c.getContext("2d");
@@ -435,18 +527,49 @@ export default class StudioSceneManager {
       return imageDataURL;
     });
   }
-  getMaterialColors(material) {
-    if (material.getClassName() === "PBRMaterial") {
-      return {
-        metallic: material.metallic,
-        roughness: material.roughness,
-        mainColor: material.albedoColor.toHexString(),
-      };
-    } else {
-      return {
-        mainColor: material.diffuseColor.toHexString(),
-      };
+
+  getAttributeValueByType(attribute, selectedMat) {
+    const { id, type } = attribute;
+
+    switch (type) {
+      case MaterialAttributeTypes.Value:
+        if (!selectedMat[id]) return null;
+        return selectedMat[id];
+      case MaterialAttributeTypes.Color:
+        if (!selectedMat[id]) return null;
+        return selectedMat[id].toHexString();
+      default:
+        break;
     }
+  }
+  getMaterialColors(material) {
+    let targetAttributes =
+      material.getClassName() === "PBRMaterial"
+        ? PBRMaterialAttributes
+        : StandardMaterialAttributes;
+
+    let colors = {};
+    Object.values(targetAttributes).map((attribute) => {
+      colors[attribute.id] = {
+        id: attribute.id,
+        name: attribute.name,
+        type: attribute.type,
+        value: this.getAttributeValueByType(attribute, material),
+      };
+    });
+    console.log("======= >>> ", colors);
+    return colors;
+    // if (material.getClassName() === "PBRMaterial") {
+    //   return {
+    //     metallic: material.metallic,
+    //     roughness: material.roughness,
+    //     mainColor: material.albedoColor.toHexString(),
+    //   };
+    // } else {
+    //   return {
+    //     mainColor: material.diffuseColor.toHexString(),
+    //   };
+    // }
   }
 
   //#region Handlers
@@ -517,7 +640,7 @@ export default class StudioSceneManager {
     // );
     // skyboxCubecTexture.level = 1;
     // this.scene.environmentTexture = skyboxCubecTexture;
-
+    let oth;
     let selectedEnvironment = HDRList.find((hdr) => hdr.id === environmentId);
     if (selectedEnvironment) {
       console.log("selectedEnvironment", selectedEnvironment);
@@ -581,6 +704,15 @@ export default class StudioSceneManager {
     this.mainCamera.radius = this.initCamValues.radius;
   }
   setCameraViewBySide(sideKey) {
+    // this.resetCameraView();
+
+    this.mainCamera.radius = this.initCamValues.radius;
+    var distance = this.initCamValues.radius * 2;
+    this.mainCamera.orthoLeft = -distance / 2;
+    this.mainCamera.orthoRight = distance / 2;
+    this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
+    this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
+
     switch (sideKey) {
       default:
       case 0: //top
@@ -592,19 +724,19 @@ export default class StudioSceneManager {
         break;
       case 1: //Left
         this.mainCamera.alpha = 0.0;
-        this.mainCamera.beta = 1.5;
+        this.mainCamera.beta = 1.57;
         this.mainCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
         this.toggleGridGround(false);
         break;
       case 2: //Right
         this.mainCamera.alpha = 3.14;
-        this.mainCamera.beta = 1.5;
+        this.mainCamera.beta = 1.57;
         this.mainCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
         this.toggleGridGround(false);
         break;
       case 3: //Center
         this.mainCamera.alpha = 1.6;
-        this.mainCamera.beta = 1.5;
+        this.mainCamera.beta = 1.57;
         this.mainCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
         this.toggleGridGround(true);
         break;

@@ -55,6 +55,7 @@ const ColorTab = (props) => {
           <EditTab selectedMaterial={selectedMaterial} />
         ) : (
           <LinkTab />
+        
         )}
       </div>
     </Row>

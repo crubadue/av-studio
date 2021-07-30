@@ -13,49 +13,112 @@ const { Title } = Typography;
 
 const EditTab = (props) => {
   const { selectedMaterial } = props;
+  const { attributes } = selectedMaterial.options;
+
+  // console.log("attributes", attributes);
+
+  const isStandardMaterial = useMemo(() => {
+    return selectedMaterial.type === MaterialsTypes.StandardMaterial
+      ? true
+      : false;
+  }, [selectedMaterial]);
+
   const [background, setBackground] = useState(
-    selectedMaterial.options.colors.mainColor
+    !isStandardMaterial
+      ? attributes.albedoColor.value
+      : attributes.diffuseColor.value
   );
   const gameManager = useContext(GmContext);
 
-  // console.log("sds", selectedMaterial);
-
-  const isStandardMaterial = useMemo(() => {
-    return selectedMaterial.type === MaterialsTypes.StandardMaterial ? true : false;
-  }, [selectedMaterial]);
-
   const handleOnOptionChange = useCallback(
     //Slides only
-    (attributeId, value) => {
-      console.log("gg", gameManager, "---", attributeId, "---->", value);
+    (attributeId, attributeType, value) => {
       gameManager.studioSceneManager.handleOnChangeMaterialOption(
         selectedMaterial.id,
         {
           id: attributeId,
-          type: MaterialAttributeTypes.Value,
+          type: attributeType,
           value: value,
         }
       );
+      if (attributeType === MaterialAttributeTypes.Color) setBackground(value);
     },
     [gameManager, selectedMaterial.id]
   );
 
-  const handleOnColorChange = useCallback(
-    (color) => {
-      console.log(`selected ${color.hex}`);
-      gameManager.studioSceneManager.handleOnChangeMaterialOption(
-        selectedMaterial.id,
-        {
-          id: isStandardMaterial
-            ? StandardMaterialAttributes.DiffuseColor
-            : PBRMaterialAttributes.AlbedoColor,
-          type: MaterialAttributeTypes.Color,
-          value: color.hex,
-        }
-      );
-      setBackground(color.hex);
+  // const handleOnColorChange = useCallback(
+  //   (color) => {
+  //     console.log(`selected ${color.hex}`);
+  //     gameManager.studioSceneManager.handleOnChangeMaterialOption(
+  //       selectedMaterial.id,
+  //       {
+  //         id: isStandardMaterial
+  //           ? StandardMaterialAttributes.DiffuseColor
+  //           : PBRMaterialAttributes.AlbedoColor,
+  //         type: MaterialAttributeTypes.Color,
+  //         value: color.hex,
+  //       }
+  //     );
+  //     setBackground(color.hex);
+  //   },
+  //   [gameManager, selectedMaterial.id, isStandardMaterial]
+  // );
+
+  const getAttributeComponentByType = useCallback(
+    (attribute) => {
+      const { id, type, name, value } = attribute;
+      switch (type) {
+        case MaterialAttributeTypes.Value:
+          return (
+            <Col offset={2} span={20} key={id}>
+              <Slider
+                defaultValue={value}
+                min={0}
+                max={1}
+                step={0.01}
+                style={{ width: "100%" }}
+                onChange={(value) => {
+                  handleOnOptionChange(id, type, value);
+                }}
+              />
+            </Col>
+          );
+        case MaterialAttributeTypes.Color:
+          return (
+            <Col offset={4} span={16} key={id}>
+              <Popover
+                content={
+                  <SketchPicker
+                    color={background}
+                    onChangeComplete={(color) =>
+                      handleOnOptionChange(id, type, color.hex)
+                    }
+                  />
+                }
+                trigger="click"
+              >
+                <div
+                  title="#0693E3"
+                  style={{
+                    background: background,
+                    height: "30px",
+                    width: "100%",
+                    cursor: "pointer",
+                    outline: "none",
+                    float: "left",
+                    borderRadius: "4px",
+                    margin: "0px 6px 6px 0px",
+                    border: "5px solid #fff",
+                  }}
+                ></div>
+              </Popover>
+            </Col>
+          );
+        default:
+          break;
+      }
     },
-    [gameManager, selectedMaterial.id, isStandardMaterial]
+    [background]
   );
 
   return (
@@ -79,23 +142,17 @@ const EditTab = (props) => {
           margin: "0px 0px 15px",
         }}
       >
-        {!isStandardMaterial && (
-          <>
+        {Object.values(attributes).map((attribute) => (
+          <div style={{ width: "100%" }} key={attribute.id}>
             <Col span={24}>
-              <Title level={5}> Metallic </Title>
+              <Title level={5}> {attribute.name} </Title>
             </Col>
-            <Col offset={2} span={20}>
-              <Slider
-                defaultValue={selectedMaterial.options.colors.metallic}
-                min={0}
-                max={1}
-                step={0.01}
-                style={{ width: "100%" }}
-                onChange={(value) => {
-                  handleOnOptionChange(PBRMaterialAttributes.Metallic, value);
-                }}
-              />
-            </Col>
+            {getAttributeComponentByType(attribute)}
+          </div>
+        ))}
+        {/* {!isStandardMaterial && (
+          <>
+            // //
             <Col span={24}>
               <Title level={5}> Roughness </Title>
             </Col>
@@ -144,7 +201,7 @@ const EditTab = (props) => {
               }}
             ></div>
           </Popover>
-        </Col>
+        </Col> */}
       </Row>
     </Row>
   );

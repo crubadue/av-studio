@@ -17,15 +17,49 @@ export const MaterialAttributeTypes = {
   Color: "Color",
 };
 
+//Mat Attributes
+
+//PBR
 export const PBRMaterialAttributes = {
-  Metallic: "metallic",
-  Roughness: "roughness",
-  AlbedoColor: "albedoColor",
-};
-export const StandardMaterialAttributes = {
-  DiffuseColor: "diffuseColor",
+  Metallic: {
+    id: "metallic",
+    type: MaterialAttributeTypes.Value,
+    name: "Metalic",
+  },
+  Roughness: {
+    id: "roughness",
+    type: MaterialAttributeTypes.Value,
+    name: "Roughness",
+  },
+  AlbedoColor: {
+    id: "albedoColor",
+    type: MaterialAttributeTypes.Color,
+    name: "Albedo Color",
+  },
 };
 
+export const PBRChannels = {
+  albedoTexture: "Albdeo Texture",
+  metallicTexture: "Metallic Texture",
+  bumpTexture: "Bum Texture",
+};
+
+//STANDARD
+export const StandardMaterialAttributes = {
+  DiffuseColor: {
+    id: "diffuseColor",
+    type: MaterialAttributeTypes.Color,
+    name: "Diffuse Color",
+  },
+};
+
+export const StandardChannels = {
+  albedoTexture: "Albdeo Texture",
+  metallicTexture: "Metallic Texture",
+  bumpTexture: "Bump Texture",
+};
+
+//Enviorment
 export const HDRList = [
   {
     id: "defaultEnvironment",
@@ -61,9 +95,4 @@ export const HDRList = [
 
 export const EnvironmentKeys = {
   intensity: "environmentIntensity",
-};
-
-export const MaterialChannels = {
-  albdeoTexture: "Albdeo Texture",
-  metallicTexture: "Metallic Texture",
 };

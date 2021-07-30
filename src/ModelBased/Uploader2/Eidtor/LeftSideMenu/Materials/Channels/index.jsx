@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useContext } from "react";
 import { Tabs, Divider, Select, Row, Col, Popover, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { GmContext } from "../../../components/renderingZone";
+import { GmContext } from "../../../../components/renderingZone";
 
 import "./index.css";
 

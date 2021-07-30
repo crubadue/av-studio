@@ -12,11 +12,12 @@ const MaterialTab = (props) => {
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // console.log("selectedMaterial ===> ", selectedMaterial);
+  console.log("selectedMaterial ===> ", selectedMaterial);
   return (
     <>
       <div style={{ height: "40%" }}>
         <ListTab
+          isLoading={isLoading}
           materialList={materialList}
           selectedMaterial={selectedMaterial}
           setSelectedMaterial={setSelectedMaterial}
