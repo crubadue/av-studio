@@ -168,7 +168,7 @@ export default class StudioSceneManager {
     // this.loaderManager.loadMainMesh(); //start load mainBike
     console.log("All OK !!");
     // this.sc
-    this.scene.debugLayer.show();
+    // this.scene.debugLayer.show();
   }
   createCamera() {
     if (this.scene.activeCamera) {
