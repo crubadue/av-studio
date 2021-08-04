@@ -14,7 +14,7 @@ const MaterialTab = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const gameManager = useContext(GmContext);
 
-  console.log("selectedMaterial ===> ", selectedMaterial);
+  // console.log("selectedMaterial ===> ", selectedMaterial);
 
   const removeMaterialChannel = (channelId) => {
     //remove texture from channel (3d)

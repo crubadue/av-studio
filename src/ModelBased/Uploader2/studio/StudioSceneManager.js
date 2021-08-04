@@ -168,7 +168,7 @@ export default class StudioSceneManager {
     // this.loaderManager.loadMainMesh(); //start load mainBike
     console.log("All OK !!");
     // this.sc
-    this.scene.debugLayer.show();
+    // this.scene.debugLayer.show();
   }
   createCamera() {
     if (this.scene.activeCamera) {
@@ -487,8 +487,6 @@ export default class StudioSceneManager {
       selectedMaterial[channelId].dispose();
       selectedMaterial[channelId] = null;
     }
-
-    console.log("imgSrc 0", imgSrc);
     let newTexture = new BABYLON.Texture(
       "data:my_image_name",
       this.scene,

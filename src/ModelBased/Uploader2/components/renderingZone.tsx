@@ -100,7 +100,7 @@ export class RenderingZone extends React.Component<
     },
     onDeselect: () => {},
     onLoadMesh: (meshData: MeshData) => {
-      console.log("meshData", meshData);
+      // console.log("meshData", meshData);
       this.setState({
         loadedMeshData: meshData,
       });
@@ -365,7 +365,7 @@ export class RenderingZone extends React.Component<
         loadedMeshData: this._meshData,
       },
       () => {
-        console.log(" GManger Ened ! ", this.state.GManager);
+        // console.log(" GManger Ened ! ", this.state.GManager);
         this.props.globalState.onSceneLoaded.notifyObservers({
           scene: this._scene,
           filename: filename,

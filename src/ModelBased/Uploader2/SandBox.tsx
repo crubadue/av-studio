@@ -118,8 +118,8 @@ export class SandBox extends React.Component<ISandboxProps, { isFileLoaded: bool
     }
 
     public render() {
-        console.log("this._globalState",this._globalState)
-        console.log("isFileLoaded",this.state.isFileLoaded)
+        // console.log("this._globalState",this._globalState)
+        // console.log("isFileLoaded",this.state.isFileLoaded)
 
         return (
             <div id="root">

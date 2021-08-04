@@ -20,8 +20,7 @@ export default class LoaderManager {
     const { url, fileExtension } = modelFile;
     // console.log("Sds", modelFile);
     //Create Bts Scene
-    console.log("url", url);
-
+    // console.log("url", url);
     BABYLON.SceneLoader.ImportMesh(
       "",
       "",
@@ -35,7 +34,7 @@ export default class LoaderManager {
             // mesh contains material
             let material = meshes[i].material;
             let materialObj = null;
-            console.log("sd1", material.getClassName());
+            // console.log("sd1", material.getClassName());
             switch (material.getClassName()) {
               case "MultiMaterial":
                 break;
@@ -129,11 +128,11 @@ export default class LoaderManager {
 
   loadMeshByURL1(url) {
     //Create Bts Scene
-    console.log("url", url);
+    // console.log("url", url);
     let assetsManager = new BABYLON.AssetsManager(this.scene);
     let model_task = assetsManager.addMeshTask("model_task", "", url, ".glb");
     model_task.onSuccess = (task) => {
-      console.log("task", task);
+      // console.log("task", task);
     };
 
     assetsManager.onProgress = (

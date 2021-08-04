@@ -2,7 +2,7 @@ import * as BABYLON from 'babylonjs';
 import GameManger from './ModelBased/Babylon/GameManager';
 
 export default function BabylonManager(canvasRef) {
-  console.log("canvasRef",canvasRef)
+  // console.log("canvasRef",canvasRef)
     if (!canvasRef) {
       throw new Error("Canvas is not provided!");
     }
