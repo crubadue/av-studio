@@ -1,26 +1,37 @@
 import React, { useCallback, useEffect, useState, useContext } from "react";
-import { Tabs, Divider, Select, Row, Col, Popover, Button } from "antd";
+import { Tabs, Divider, Select, Row, Col, Popover, Button, Upload } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { GmContext } from "../../../../components/renderingZone";
 
+import UploadButton from "./UploadButton";
 import "./index.css";
 
 const { Option } = Select;
 
 const Channels = (props) => {
-  const { selectedMaterial } = props;
+  const { selectedMaterial, updateMaterialChannels, removeMaterialChannel } =
+    props;
   const { channels } = selectedMaterial.options;
-  const gameManager = useContext(GmContext);
 
-  console.log("seeeeee", selectedMaterial);
-  const content = (index) => {
-    console.log("pp===", index);
+  const onImageLoad = (channelId, imgSrc) => {
+    // console.log("ss", imgSrc);
+    updateMaterialChannels(channelId, imgSrc);
+  };
+
+  const content = (imgSrc, channelId) => {
     return (
       <div>
-        <Button style={{ marginRight: "5px" }} danger>
-          Remove
-        </Button>
-        <Button type="text">Upload</Button>
+        {imgSrc && (
+          <Button
+            style={{ marginRight: "5px" }}
+            onClick={() => {
+              removeMaterialChannel(channelId);
+            }}
+            danger
+          >
+            Remove
+          </Button>
+        )}
+        <UploadButton onImageLoad={onImageLoad} channelId={channelId} />
       </div>
     );
   };
@@ -44,11 +55,14 @@ const Channels = (props) => {
             <div className="divHolder">
               <div className="channelImg">
                 <img
-                  style={{ height: "100%", borderRadius: "5px" }}
+                  style={{ height: "100%", width: "100%", borderRadius: "5px" }}
                   src={channel.img}
                 ></img>
               </div>
-              <Popover trigger="click" content={content(index)}>
+              <Popover
+                trigger="click"
+                content={content(channel.img, channel.id)}
+              >
                 <EditOutlined style={{ fontSize: "20px", color: "white" }} />
               </Popover>
             </div>

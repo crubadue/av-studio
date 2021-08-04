@@ -168,7 +168,7 @@ export default class StudioSceneManager {
     // this.loaderManager.loadMainMesh(); //start load mainBike
     console.log("All OK !!");
     // this.sc
-    // this.scene.debugLayer.show();
+    this.scene.debugLayer.show();
   }
   createCamera() {
     if (this.scene.activeCamera) {
@@ -218,7 +218,7 @@ export default class StudioSceneManager {
 
     this.mainCamera.upperBetaLimit = 1.57;
 
-    this.mainCamera.minZ = 0.1;
+    this.mainCamera.minZ = 0.001;
     // this.mainCamera.maxZ = Number.MAX_VALUE;
     // this.mainCamera.target = new BABYLON.Vector3(0, 0.5, 0);
 
@@ -237,7 +237,6 @@ export default class StudioSceneManager {
 
     this.mainCamera.attachControl(this.canvas, true);
   }
-
   createGround() {
     let groundSize = 50;
     if (this.worldExtends) {
@@ -466,17 +465,46 @@ export default class StudioSceneManager {
         });
       });
     }, 200);
-
     // console.log("dddddddddddddddddddddddddddddddddddddddddddd");
     return {
       attributes,
     };
   }
+  removeChannelTexture(matId, channelId) {
+    let selectedMaterial = this.scene.getMaterialByUniqueID(matId);
+    if (!selectedMaterial) return;
+    if (selectedMaterial[channelId]) {
+      selectedMaterial[channelId].dispose();
+      selectedMaterial[channelId] = null;
+    }
+  }
+  updateChannelTexture(matId, channelId, imgSrc) {
+    let selectedMaterial = this.scene.getMaterialByUniqueID(matId);
+    if (!selectedMaterial) return;
 
+    if (selectedMaterial[channelId]) {
+      //remove texture if it's exsits
+      selectedMaterial[channelId].dispose();
+      selectedMaterial[channelId] = null;
+    }
+
+    console.log("imgSrc 0", imgSrc);
+    let newTexture = new BABYLON.Texture(
+      "data:my_image_name",
+      this.scene,
+      true,
+      true,
+      BABYLON.Texture.BILINEAR_SAMPLINGMODE,
+      null,
+      null,
+      imgSrc,
+      true
+    );
+    selectedMaterial[channelId] = newTexture;
+  }
   //#endregion
   //#region material option
   //#endregion
-
   async getMaterialChannels(material) {
     //Channel obj
     let channels = {};
@@ -523,7 +551,6 @@ export default class StudioSceneManager {
       return imageDataURL;
     });
   }
-
   getAttributeValueByType(attribute, selectedMat) {
     const { id, type } = attribute;
 
@@ -566,7 +593,10 @@ export default class StudioSceneManager {
     //   };
     // }
   }
-
+  removeTextureChannel(channelId, materialId) {
+    let selectedMaterial = this.scene.getMaterialByUniqueID(materialId);
+    if (!selectedMaterial) return;
+  }
   //#region Handlers
   handleLoadMeshByURL(modelFile, onLoadMesh) {
     this.loaderManager.loadMeshByURL(modelFile, onLoadMesh);

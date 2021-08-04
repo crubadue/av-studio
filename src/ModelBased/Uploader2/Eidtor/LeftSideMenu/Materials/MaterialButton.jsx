@@ -5,7 +5,7 @@ import "../../../../../index.css";
 import { GmContext } from "../../../components/renderingZone";
 
 const ListTab = (props) => {
-  const { material, selectedMaterial, setSelectedMaterial, onSelectMaterial } =
+  const { material, selectedMaterial, onSelectMaterial } =
     props;
 
   const isSelected = useMemo(() => {

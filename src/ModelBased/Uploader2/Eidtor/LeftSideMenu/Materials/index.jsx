@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useContext, useCallback, useEffect, useState } from "react";
 import { Divider, Collapse, Spin } from "antd";
+import { GmContext } from "../../../components/renderingZone";
 
 import ListTab from "./ListTab";
 import ColorTab from "./Color";
@@ -11,8 +12,59 @@ const MaterialTab = (props) => {
   const { materialList } = props;
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const gameManager = useContext(GmContext);
 
   console.log("selectedMaterial ===> ", selectedMaterial);
+
+  const removeMaterialChannel = (channelId) => {
+    //remove texture from channel (3d)
+    gameManager.studioSceneManager.removeChannelTexture(
+      selectedMaterial.id,
+      channelId
+    );
+    //remove texture from channel (react)
+    let selectedChannel = selectedMaterial.options.channels[channelId];
+    selectedChannel.img = "";
+    setSelectedMaterial((prevMat) => {
+      return {
+        ...prevMat,
+        options: {
+          ...prevMat.options,
+          channels: {
+            ...prevMat.options.channels,
+            [channelId]: selectedChannel,
+          },
+        },
+      };
+    });
+  };
+
+  const updateMaterialChannels = (channelId, imgSrc) => {
+    //update channel texture (3d)
+    gameManager.studioSceneManager.updateChannelTexture(
+      selectedMaterial.id,
+      channelId,
+      imgSrc
+    );
+
+    //update texture from channel (react)
+    let selectedChannel = selectedMaterial.options.channels[channelId];
+    selectedChannel.img = imgSrc;
+
+    setSelectedMaterial((prevMat) => {
+      return {
+        ...prevMat,
+        options: {
+          ...prevMat.options,
+          channels: {
+            ...prevMat.options.channels,
+            [channelId]: selectedChannel,
+          },
+        },
+      };
+    });
+  };
+
   return (
     <>
       <div style={{ height: "40%" }}>
@@ -42,7 +94,11 @@ const MaterialTab = (props) => {
                   <ColorTab selectedMaterial={selectedMaterial} />
                 </Panel>
                 <Panel header="Channels" key="2">
-                  <Channels selectedMaterial={selectedMaterial} />
+                  <Channels
+                    updateMaterialChannels={updateMaterialChannels}
+                    removeMaterialChannel={removeMaterialChannel}
+                    selectedMaterial={selectedMaterial}
+                  />
                 </Panel>
               </Collapse>
             </Spin>

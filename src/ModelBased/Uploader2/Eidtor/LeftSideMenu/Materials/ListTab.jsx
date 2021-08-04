@@ -68,7 +68,6 @@ const ListTab = (props) => {
   //   }
   // }, [isLoading]);
 
-  
   return (
     <Row
       style={{
@@ -85,7 +84,6 @@ const ListTab = (props) => {
             <MaterialButton
               material={material}
               selectedMaterial={selectedMaterial}
-              setSelectedMaterial={setSelectedMaterial}
               onSelectMaterial={onSelectMaterial}
             ></MaterialButton>
           </Col>
