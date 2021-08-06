@@ -450,6 +450,7 @@ export default class StudioSceneManager {
   MouseWheelHandler(ev) {}
   //#endregion
 
+
   //#region Getters
   getMaterialOptions(materialId, onLoadTextuers) {
     let selectedMaterial = this.scene.getMaterialByUniqueID(materialId);
@@ -498,7 +499,11 @@ export default class StudioSceneManager {
       imgSrc,
       true
     );
+    //fixTexture Render
+    newTexture.vScale = -1;
+    //assgin
     selectedMaterial[channelId] = newTexture;
+
   }
   //#endregion
   //#region material option
@@ -733,7 +738,7 @@ export default class StudioSceneManager {
     this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
     this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
 
-    this.mainCamera.minZ = this.mainCamera.maxZ * -1;
+    this.mainCamera.minZ = 0; //this.mainCamera.maxZ * -1;
     switch (sideKey) {
       default:
       case 0: //top
