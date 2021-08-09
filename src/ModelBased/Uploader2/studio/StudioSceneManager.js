@@ -107,6 +107,7 @@ export default class StudioSceneManager {
     this.scene.clearColor = new BABYLON.Color4(1, 1, 1, 1.0);
     this.scene.imageProcessingConfiguration.contrast = 2.0;
     this.scene.imageProcessingConfiguration.exposure = 0.6;
+
     // this.scene.imageProcessingConfiguration.toneMappingEnabled = true;
 
     // BABYLON.SceneLoader.ImportMesh(
@@ -152,6 +153,7 @@ export default class StudioSceneManager {
           break;
         default:
           break;
+
       }
     });
 
@@ -197,7 +199,6 @@ export default class StudioSceneManager {
     };
 
     // console.log("this.initCamValues 1", this.initCamValues);
-
     // this.mainCamera.useAutoRotationBehavior = true;
     this.mainCamera.useFramingBehavior = true;
     // this.mainCamera.useBouncingBehavior = true;
@@ -363,10 +364,20 @@ export default class StudioSceneManager {
     // this.resetCameraView();;
     var distance = this.mainCamera.radius * 2;
     this.ratio = this.canvas.height / this.canvas.width;
-    this.mainCamera.orthoLeft = -distance;
-    this.mainCamera.orthoRight = distance;
-    this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
-    this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
+
+    // this.mainCamera.orthoLeft = -distance;
+    // this.mainCamera.orthoRight = distance;
+    // this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
+    // this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
+    
+    const rect   = this.engine.getRenderingCanvasClientRect();
+    const aspect = rect.height / rect.width; 
+    // In this example we'll set the distance based on the camera's radius.
+    this.mainCamera.orthoLeft   = -this.mainCamera.radius;
+    this.mainCamera.orthoRight  =  this.mainCamera.radius;
+    this.mainCamera.orthoBottom = -this.mainCamera.radius * aspect;
+    this.mainCamera.orthoTop    =  this.mainCamera.radius * aspect;   
+
 
     this.totalZoom = 0;
     this.zoomTarget = null;
@@ -379,7 +390,7 @@ export default class StudioSceneManager {
           Math.min(1, event.wheelDelta || -event.detail || event.deltaY)
         ) * 0.2;
       if (
-        (delta > 0 && this.totalZoom < this.worldExtends.max.x / 2) ||
+        (delta > 0 && this.totalZoom < this.worldExtends.max.x / 1) ||
         delta < 0
       ) {
         this.totalZoom += delta;
@@ -711,7 +722,7 @@ export default class StudioSceneManager {
       if (checked) this.controlSkyBoxBlur(0.5);
     }
   }
-  xcontrolSkyBoxBlur(value) {
+  controlSkyBoxBlur(value) {
     let skyboxMat = this.scene.getMaterialByID("skyBox");
     if (skyboxMat) {
       //doableKey
@@ -733,12 +744,21 @@ export default class StudioSceneManager {
 
     this.mainCamera.radius = this.initCamValues.radius;
     var distance = this.initCamValues.radius * 2;
-    this.mainCamera.orthoLeft = -distance / 2;
-    this.mainCamera.orthoRight = distance / 2;
-    this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
-    this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
 
-    this.mainCamera.minZ = 0; //this.mainCamera.maxZ * -1;
+    const rect   = this.engine.getRenderingCanvasClientRect();
+    const aspect = rect.height / rect.width; 
+    // In this example we'll set the distance based on the camera's radius.
+    this.mainCamera.orthoLeft   = -this.mainCamera.radius;
+    this.mainCamera.orthoRight  =  this.mainCamera.radius;
+    this.mainCamera.orthoBottom = -this.mainCamera.radius * aspect;
+    this.mainCamera.orthoTop    =  this.mainCamera.radius * aspect;   
+
+    // this.mainCamera.orthoLeft = -distance / 2;
+    // this.mainCamera.orthoRight = distance / 2;
+    // this.mainCamera.orthoTop = this.mainCamera.orthoRight * this.ratio;
+    // this.mainCamera.orthoBottom = this.mainCamera.orthoLeft * this.ratio;
+
+    this.mainCamera.minZ = -2;
     switch (sideKey) {
       default:
       case 0: //top
@@ -761,6 +781,7 @@ export default class StudioSceneManager {
         this.toggleGridGround(false);
         break;
       case 3: //Center
+        this.mainCamera.minZ = 0; 
         this.mainCamera.alpha = 1.6;
         this.mainCamera.beta = 1.57;
         this.mainCamera.mode = BABYLON.Camera.PERSPECTIVE_CAMERA;
